@@ -33,7 +33,22 @@ export async function getCurrentProfile() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("Unauthorized");
+    const profile = await prisma.profile.findUnique({
+      where: { userId: DEV_USER_ID },
+      include: {
+        attributes: true,
+        futureSelves: true,
+        titles: true,
+        achievements: true,
+        quests: true,
+      },
+    });
+
+    if (!profile) {
+      throw new Error("Development profile not found. Did you run the seed script?");
+    }
+
+    return profile;
   }
 
   const { data: profile, error } = await supabase

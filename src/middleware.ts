@@ -29,6 +29,18 @@ export async function middleware(request: NextRequest) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
+
+    const isAuthPage =
+      request.nextUrl.pathname.startsWith("/login") ||
+      request.nextUrl.pathname.startsWith("/signup") ||
+      request.nextUrl.pathname.startsWith("/auth/callback");
+
+    if (!user && !isAuthPage) {
+      // Allow access for now; getCurrentProfile falls back to dev profile if needed.
+      // Uncomment the line below to enforce auth strictly.
+      // return NextResponse.redirect(new URL("/login", request.url));
+    }
+
     return response;
   } catch {
     return response;

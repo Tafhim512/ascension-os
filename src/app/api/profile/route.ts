@@ -1,15 +1,95 @@
-import { NextResponse } from 'next/server';
-import { getCurrentProfile } from '@/lib/auth';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
 
-export async function GET() {
+const DEV_USER_ID = "123e4567-e89b-12d3-a456-426614174000";
+
+export async function GET(req: Request) {
   try {
-    const profile = await getCurrentProfile();
-    return NextResponse.json({
-      playerName: profile.playerName,
-      level: profile.level,
-      hunterRank: profile.hunterRank
+    const url = new URL(req.url);
+    const userId = url.searchParams.get("userId") || DEV_USER_ID;
+
+    if (!userId) {
+      return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+    }
+
+    const profile = await prisma.profile.findUnique({
+      where: { userId },
+      include: {
+        attributes: true,
+        futureSelves: true,
+        titles: true,
+        achievements: true,
+        quests: true,
+      },
     });
+
+    if (!profile) {
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ profile });
   } catch (error) {
-    return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
+    console.error("Profile fetch error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch profile" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const { userId, playerName } = await req.json();
+
+    if (!userId) {
+      return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+    }
+
+    const existing = await prisma.profile.findUnique({
+      where: { userId },
+    });
+
+    if (existing) {
+      return NextResponse.json({ profile: existing });
+    }
+
+    const profile = await prisma.profile.create({
+      data: {
+        userId: userId || DEV_USER_ID,
+        playerName: playerName || "Player 1",
+        attributes: {
+          create: [
+            { attributeId: "BODY", level: 1, currentXp: 0 },
+            { attributeId: "INTELLIGENCE", level: 1, currentXp: 0 },
+            { attributeId: "DISCIPLINE", level: 1, currentXp: 0 },
+            { attributeId: "WISDOM", level: 1, currentXp: 0 },
+            { attributeId: "COMMUNICATION", level: 1, currentXp: 0 },
+            { attributeId: "AI_ENGINEERING", level: 1, currentXp: 0 },
+            { attributeId: "SOFTWARE_ENGINEERING", level: 1, currentXp: 0 },
+            { attributeId: "PRODUCT_BUILDING", level: 1, currentXp: 0 },
+            { attributeId: "BUSINESS", level: 1, currentXp: 0 },
+            { attributeId: "LEADERSHIP", level: 1, currentXp: 0 },
+            { attributeId: "CREATIVITY", level: 1, currentXp: 0 },
+            { attributeId: "RELATIONSHIPS", level: 1, currentXp: 0 },
+            { attributeId: "FINANCE", level: 1, currentXp: 0 },
+            { attributeId: "EMOTIONAL_CONTROL", level: 1, currentXp: 0 },
+          ],
+        },
+        futureSelves: {
+          create: {
+            vision: "I am ready to transform.",
+            alignmentScore: 0,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json({ profile });
+  } catch (error) {
+    console.error("Profile creation error:", error);
+    return NextResponse.json(
+      { error: "Failed to create profile" },
+      { status: 500 }
+    );
   }
 }
