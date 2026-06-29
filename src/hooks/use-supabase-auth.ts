@@ -40,14 +40,26 @@ export function useSupabaseAuth() {
   async function signIn(email: string, password: string) {
     setLoading(true);
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     setLoading(false);
     if (error) {
+      if (error.message.includes("Email not confirmed")) {
+        return { error: "Please verify your email address before logging in. Check your inbox." };
+      }
       return { error: error.message };
+    }
+
+    if (data.user) {
+      // Fallback: If for some reason the profile wasn't created during signup, try now
+      await fetch("/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: data.user.id, playerName: email.split("@")[0] }),
+      });
     }
 
     router.push("/");
