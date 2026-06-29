@@ -7,6 +7,7 @@ import { momentumGainFromQuest } from "@/lib/engine/momentum";
 import { embedJournalEntry, embedProject } from "@/lib/ai/memory";
 import { processAchievements } from "@/lib/engine/achievement-checker";
 import { getCurrentProfile } from "@/lib/auth";
+import type { Attribute } from "@prisma/client";
 
 async function getProfileId(): Promise<string> {
   const profile = await getCurrentProfile();
@@ -90,7 +91,7 @@ export async function completeQuest(questId: string, profileId: string) {
     try { attributeRewardsArray = JSON.parse(quest.attributeRewards); } catch {}
 
     for (const reward of attributeRewardsArray) {
-      const attr = profile.attributes.find((a) => a.attributeId === reward.attributeId);
+      const attr = profile.attributes.find((a: Attribute) => a.attributeId === reward.attributeId);
       if (attr) {
         let attrNewXp = attr.currentXp + (reward.xp || 0);
         let attrNewLevel = attr.level;
