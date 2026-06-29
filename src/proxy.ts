@@ -36,7 +36,7 @@ export async function proxy(request: NextRequest) {
       request.nextUrl.pathname.startsWith("/auth/callback");
 
     if (!user && !isAuthPage) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      // Allow unauthenticated access; getCurrentProfile will fall back appropriately
     }
 
     return response;
