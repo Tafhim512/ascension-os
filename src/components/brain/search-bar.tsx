@@ -8,7 +8,7 @@ interface SearchResult {
   type: string;
   id: string;
   text: string;
-  metadata: any;
+  metadata: Record<string, unknown>;
 }
 
 export function SemanticSearchBar({ onResults }: { onResults: (res: SearchResult[]) => void }) {

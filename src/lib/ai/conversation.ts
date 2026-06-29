@@ -1,11 +1,16 @@
 import { Ollama } from "ollama";
 import { searchMemories, formatMemoriesForPrompt } from "./memory";
+import type { Profile } from "@prisma/client";
+
+type ChatProfile = Profile & {
+  futureSelves?: { vision?: string }[];
+};
 
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
 const MODEL = process.env.OLLAMA_MODEL || "llama3.1";
 const ollama = new Ollama({ host: OLLAMA_BASE_URL });
 
-async function* fallbackStream(profile: any, messages: any[]) {
+async function* fallbackStream(profile: ChatProfile, messages: { role: string; content: string }[]) {
   const userMessage = messages[messages.length - 1]?.content || "";
   const memoryContext = "No memories stored yet.";
   const reply = `System fallback active.\n\nOllama is offline. Operational mode: limited.\nLast user message: "${userMessage}"\nMemory context: ${memoryContext}`;
@@ -16,7 +21,7 @@ async function* fallbackStream(profile: any, messages: any[]) {
   }
 }
 
-export async function* chatStream(profile: any, messages: any[]) {
+export async function* chatStream(profile: ChatProfile, messages: { role: string; content: string }[]) {
   const lastMsg = messages[messages.length - 1]?.content || "";
 
   let memoryContext = "No memories stored yet.";

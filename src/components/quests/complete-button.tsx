@@ -1,13 +1,15 @@
 "use client";
 
-import { CheckCircle2, Circle, Play } from "lucide-react";
+import { Circle, Play } from "lucide-react";
 import { useState, useTransition } from "react";
 import { completeQuest } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { FocusMode } from "./focus-mode";
 
-export function QuestCompleteButton({ questId, profileId, quest }: { questId: string, profileId: string, quest: any }) {
+import type { Quest } from "@prisma/client";
+
+export function QuestCompleteButton({ questId, profileId, quest }: { questId: string, profileId: string, quest: Quest }) {
   const [isPending, startTransition] = useTransition();
   const [isFocusMode, setIsFocusMode] = useState(false);
   const router = useRouter();

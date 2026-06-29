@@ -4,7 +4,6 @@ import { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, X, BrainCircuit, Sparkles } from "lucide-react";
 import { createKnowledgeItem } from "@/app/actions/knowledge-actions";
-import { useRouter } from "next/navigation";
 
 export function AddKnowledgeModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +11,6 @@ export function AddKnowledgeModal() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("Framework");
-  const router = useRouter();
 
   const handleSubmit = () => {
     if (!title.trim() || !content.trim()) return;

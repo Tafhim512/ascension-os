@@ -1,5 +1,4 @@
 import { getCurrentProfile } from "@/lib/auth";
-import { XpBar } from "@/components/shared/progression-ui";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Brain, Dumbbell, Speech, Zap, Crown, Rocket } from "lucide-react";
 import { AddAttributeModal } from "@/components/attributes/add-attribute-modal";

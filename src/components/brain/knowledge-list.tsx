@@ -5,20 +5,38 @@ import { SemanticSearchBar } from "./search-bar";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Lightbulb, Link2 } from "lucide-react";
 
-export function KnowledgeList({ initialItems }: { initialItems: any[] }) {
-  const [items, setItems] = useState(initialItems);
+interface KnowledgeItem {
+  id: string;
+  title: string;
+  content: string;
+  category: string | null;
+  tags: string;
+  keyIdeas: string;
+  aiReflection: string | null;
+}
+
+interface SearchResult {
+  similarity: number;
+  type: string;
+  id: string;
+  text: string;
+  metadata: Record<string, unknown>;
+}
+
+export function KnowledgeList({ initialItems }: { initialItems: KnowledgeItem[] }) {
+  const [items, setItems] = useState<KnowledgeItem[]>(initialItems);
   const [isSearchActive, setIsSearchActive] = useState(false);
 
-  const handleSearchResults = (results: any[]) => {
+  const handleSearchResults = (results: SearchResult[]) => {
     setIsSearchActive(true);
     // Semantic search returns mixed types (journals, knowledge, projects). We'll filter for knowledge or just display all.
     // For now, let's map search results to match knowledge item UI.
     const mappedItems = results
       .filter((r) => r.type === "knowledge")
       .map((r) => {
-         return {
-            id: r.id,
-            title: r.metadata?.title || "Search Result",
+          return {
+             id: r.id,
+             title: (r.metadata?.title as string) || "Search Result",
             content: r.text,
             category: "Search Match",
             tags: "[]",

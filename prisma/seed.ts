@@ -19,7 +19,7 @@ async function main() {
 
   if (!existingProfile) {
     console.log('Creating fresh level 1 player profile...');
-    const devProfile = await prisma.profile.create({
+    void prisma.profile.create({
       data: {
         userId: authUserId,
         playerName: "Player 1",

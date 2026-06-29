@@ -1,11 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AlertTriangle, Repeat, CheckCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
+interface GapItem {
+  category: string;
+  insight: string;
+  recommendation: string;
+}
+
 export function GapAnalysisWidget() {
-  const [analysis, setAnalysis] = useState<any[]>([]);
+  const [analysis, setAnalysis] = useState<GapItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

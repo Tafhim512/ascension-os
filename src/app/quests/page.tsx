@@ -74,7 +74,7 @@ export default async function QuestsPage() {
                 )}
                 {quest.aiContext && (
                    <p className="text-xs text-accent-purple/80 mt-2 italic border-l-2 border-accent-purple/30 pl-2">
-                     "{quest.aiContext}"
+                      &ldquo;{quest.aiContext}&rdquo;
                    </p>
                 )}
               </CardHeader>

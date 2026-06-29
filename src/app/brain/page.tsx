@@ -1,17 +1,28 @@
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Brain, Book } from "lucide-react";
 import { AddKnowledgeModal } from "@/components/brain/add-knowledge-modal";
 import { KnowledgeList } from "@/components/brain/knowledge-list";
 import { KnowledgeGraph } from "@/components/brain/knowledge-graph";
+import type { KnowledgeItem, Book as PrismaBook } from "@prisma/client";
+
+interface KnowledgeListProps {
+  id: string;
+  title: string;
+  content: string;
+  category: string | null;
+  tags: string;
+  keyIdeas: string;
+  aiReflection: string | null;
+}
 
 export const dynamic = 'force-dynamic';
 
 export default async function BrainPage() {
   const profile = await getCurrentProfile();
 
-  let knowledgeItems: any[] = [];
+  let knowledgeItems: KnowledgeItem[] = [];
   try {
     knowledgeItems = await prisma.knowledgeItem.findMany({
       where: { profileId: profile.id },
@@ -21,9 +32,9 @@ export default async function BrainPage() {
     // DB unavailable
   }
 
-  let books: any[] = [];
+  let bookItems: PrismaBook[] = [];
   try {
-    books = await prisma.book.findMany({
+    bookItems = await prisma.book.findMany({
       where: { profileId: profile.id },
       orderBy: { updatedAt: 'desc' },
       take: 5
@@ -53,7 +64,7 @@ export default async function BrainPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Knowledge Nodes */}
         <div className="md:col-span-2 space-y-6">
-          <KnowledgeList initialItems={knowledgeItems} />
+          <KnowledgeList initialItems={knowledgeItems as KnowledgeListProps[]} />
         </div>
 
         {/* Books & Courses Column */}
@@ -63,8 +74,8 @@ export default async function BrainPage() {
             <h2 className="text-lg font-bold text-white">Active Library</h2>
           </div>
           
-          {books.length > 0 ? (
-            books.map((book) => (
+          {bookItems.length > 0 ? (
+            bookItems.map((book) => (
               <Card key={book.id} className="border-border/50 bg-bg-elevated/40">
                 <CardContent className="p-4">
                   <h3 className="font-bold text-white text-sm">{book.title}</h3>

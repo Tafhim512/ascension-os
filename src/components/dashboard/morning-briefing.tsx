@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { Cpu, RefreshCcw } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,11 +9,10 @@ export function MorningBriefingWidget() {
   const [briefing, setBriefing] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const fetchBriefing = async (force = false) => {
+  async function fetchBriefing(force = false) {
     if (!force) {
       const cached = localStorage.getItem("ascension_briefing");
       const cacheTime = localStorage.getItem("ascension_briefing_time");
-      // Cache for 3 hours
       if (cached && cacheTime && (Date.now() - parseInt(cacheTime) < 10800000)) {
         setBriefing(cached);
         setLoading(false);
@@ -25,7 +25,6 @@ export function MorningBriefingWidget() {
       const res = await fetch("/api/ai/briefing");
       if (res.ok) {
         const data = await res.json();
-        // Since Ollama might add JSON wrappers, sometimes it fails. Fallback if it's an object:
         const parsedBriefing = typeof data.briefing === 'string' ? data.briefing : JSON.stringify(data.briefing);
         setBriefing(parsedBriefing);
         localStorage.setItem("ascension_briefing", parsedBriefing);
@@ -38,7 +37,7 @@ export function MorningBriefingWidget() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   useEffect(() => {
     fetchBriefing();
@@ -70,9 +69,9 @@ export function MorningBriefingWidget() {
            <h3 className="text-[10px] font-black uppercase tracking-widest text-accent-cyan mb-1 flex items-center gap-2">
               System Briefing
            </h3>
-           <p className="text-sm font-medium text-white leading-relaxed">
-              "{briefing}"
-           </p>
+            <p className="text-sm font-medium text-white leading-relaxed">
+              &ldquo;{briefing}&rdquo;
+            </p>
         </div>
 
         <button 

@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, Disc, Maximize, Play, Pause, Square, ExternalLink, Zap } from "lucide-react";
+import { Brain, Disc, Play, Pause } from "lucide-react";
+
+import type { Quest } from "@prisma/client";
 
 interface FocusModeProps {
-  quest: any;
+  quest: Quest;
   onComplete: () => void;
   onCancel: () => void;
 }

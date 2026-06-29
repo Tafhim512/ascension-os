@@ -1,5 +1,4 @@
 import { Ollama } from "ollama";
-import type { Profile, Attribute } from "@prisma/client";
 
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
 const MODEL = process.env.OLLAMA_MODEL || "llama3.1";

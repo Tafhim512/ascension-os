@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { ACHIEVEMENTS, checkAchievements, getRarityColor, getRarityBg } from "./achievements";
+import { checkAchievements } from "./achievements";
 
 export async function processAchievements(profileId: string) {
   const profile = await prisma.profile.findUnique({

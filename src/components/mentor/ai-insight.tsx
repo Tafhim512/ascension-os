@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { Cpu, RefreshCcw, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,11 +9,10 @@ export function AiMentorWidget() {
   const [insight, setInsight] = useState("Connecting to the System neural network...");
   const [loading, setLoading] = useState(true);
 
-  const fetchInsight = async (force = false) => {
+  async function fetchInsight(force = false) {
     if (!force) {
       const cached = localStorage.getItem("ascension_daily_insight");
       const cacheTime = localStorage.getItem("ascension_daily_insight_time");
-      // Cache for 6 hours (21600000 ms)
       if (cached && cacheTime && (Date.now() - parseInt(cacheTime) < 21600000)) {
         setInsight(cached);
         setLoading(false);
@@ -36,7 +36,7 @@ export function AiMentorWidget() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   useEffect(() => {
     fetchInsight();
@@ -52,14 +52,14 @@ export function AiMentorWidget() {
            <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-accent-cyan shadow-sm">
              <Sparkles className="w-3 h-3" /> System Intelligence
            </h3>
-           <button onClick={() => fetchInsight(true)} disabled={loading} className="text-text-muted hover:text-accent-cyan transition-colors disabled:opacity-50">
+            <button onClick={() => fetchInsight(true)} disabled={loading} className="text-text-muted hover:text-accent-cyan transition-colors disabled:opacity-50">
              <RefreshCcw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
            </button>
         </div>
         
-        <p className="text-sm font-medium text-text-primary leading-relaxed border-l-2 border-accent-cyan/50 pl-4 py-1 italic">
-           "{insight}"
-        </p>
+         <p className="text-sm font-medium text-text-primary leading-relaxed border-l-2 border-accent-cyan/50 pl-4 py-1 italic">
+            &ldquo;{insight}&rdquo;
+         </p>
       </CardContent>
     </Card>
   );

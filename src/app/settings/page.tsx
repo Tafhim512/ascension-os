@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Settings as SettingsIcon, Database, Moon } from "lucide-react";
 
 export default function SettingsPage() {

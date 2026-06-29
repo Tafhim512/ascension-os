@@ -49,10 +49,15 @@ Your tone: Analytical, slightly intense, motivating. Acknowledge their time of d
 
   try {
     const response = await callAI(systemPrompt, "Provide my briefing.", true);
-    const parsed = JSON.parse(response);
-    return typeof parsed?.briefing === "string" ? parsed.briefing : response;
+    try {
+      const parsed = JSON.parse(response);
+      return typeof parsed?.briefing === "string" ? parsed.briefing : response;
+    } catch {
+      // Fallback text is not JSON, just return it directly
+      return response;
+    }
   } catch (error) {
     console.error("Failed to generate briefing", error);
-    return `System offline. Execute your daily protocols manually.`;
+    return "System offline. Execute your daily protocols manually.";
   }
 }

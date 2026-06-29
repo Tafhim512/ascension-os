@@ -7,6 +7,9 @@
   "functions": {
     "src/app/api/**/*.ts": {
       "maxDuration": 10
+    },
+    "src/app/api/ai/**/*.ts": {
+      "maxDuration": 60
     }
   }
 }

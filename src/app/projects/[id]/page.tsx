@@ -1,9 +1,11 @@
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { ArrowLeft, Rocket, Code2, Users, DollarSign, Brain, BarChart3, TrendingUp, Plus } from "lucide-react";
+import { ArrowLeft, Rocket, Code2, Users, DollarSign, Brain, TrendingUp, Plus } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { notFound } from "next/navigation";
+
+import type { Project } from "@prisma/client";
 
 export const dynamic = 'force-dynamic';
 
@@ -15,7 +17,7 @@ export default async function ProjectWorkspacePage({
   const profile = await getCurrentProfile();
   const { id } = await params;
 
-  let project: any = null;
+  let project: Project | null = null;
   try {
     project = await prisma.project.findUnique({
       where: { id },

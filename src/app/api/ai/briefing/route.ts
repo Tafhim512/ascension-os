@@ -8,7 +8,7 @@ export async function GET() {
     const briefing = await generateMorningBriefing(profile.id);
     
     return NextResponse.json({ briefing });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to generate briefing' }, { status: 500 });
   }
 }

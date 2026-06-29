@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, Command, Search, Sparkles, Target, Zap, Clock } from "lucide-react";
+import { Brain, Command, Search, Sparkles, Target, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function CommandPalette() {

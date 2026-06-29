@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Target, Activity, Shield, BookOpen, Settings, Brain, Sword, BarChart2, Map } from "lucide-react";
+import { LayoutDashboard, Target, Activity, Shield, BookOpen, Settings, Brain, BarChart2, Map } from "lucide-react";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Home", href: "/" },

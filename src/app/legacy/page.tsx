@@ -1,7 +1,7 @@
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, FolderGit2, Zap, ExternalLink, Code } from "lucide-react";
+import { BookOpen, FolderGit2, Code } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
@@ -9,19 +9,9 @@ export const dynamic = 'force-dynamic';
 export default async function LegacyPage() {
   const profile = await getCurrentProfile();
 
-  let projects: any[] = [];
+  let projects: { id: string; name: string; type: string; description: string | null; status: string; progress: number }[] = [];
   try {
     projects = await prisma.project.findMany({
-      where: { profileId: profile.id },
-      orderBy: { updatedAt: 'desc' },
-    });
-  } catch {
-    // DB unavailable
-  }
-
-  let books: any[] = [];
-  try {
-    books = await prisma.book.findMany({
       where: { profileId: profile.id },
       orderBy: { updatedAt: 'desc' },
     });

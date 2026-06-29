@@ -1,7 +1,6 @@
 import { getCurrentProfile } from "@/lib/auth";
-import { prisma } from "@/lib/db";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Map, Trophy, Star, GitBranch, Activity, Smartphone } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Map, Star, GitBranch, Activity, Smartphone, CheckCircle2 } from "lucide-react";
 
 const WORLDS = [
   { id: "THE_WEAK", name: "The Weak", level: 1, color: "text-gray-500", bg: "bg-gray-500/20" },
@@ -15,7 +14,8 @@ const WORLDS = [
 
 export default async function WorldMapPage() {
   const profile = await getCurrentProfile();
-  const currentWorldIndex = WORLDS.findIndex(w => w.id === profile.currentWorld);
+  const worlds = WORLDS;
+  const currentWorldId = profile.currentWorld;
 
   return (
     <div className="p-4 md:p-10 space-y-8 animate-in fade-in duration-700">
@@ -80,9 +80,9 @@ export default async function WorldMapPage() {
          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 bg-border/50 -translate-x-1/2 z-0"></div>
 
          <div className="space-y-16">
-            {WORLDS.map((world, idx) => {
-               const isUnlocked = profile.level >= world.level;
-               const isCurrent = world.id === profile.currentWorld;
+          {worlds.map((world, idx) => {
+             const isUnlocked = profile.level >= world.level;
+             const isCurrent = world.id === currentWorldId;
                const isPast = isUnlocked && !isCurrent;
 
                return (
@@ -137,5 +137,4 @@ export default async function WorldMapPage() {
   );
 }
 
-// Just for icon above
-import { CheckCircle2 } from "lucide-react";
+// CheckCircle2 is used as an icon in the world map timeline

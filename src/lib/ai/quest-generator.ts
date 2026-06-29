@@ -7,8 +7,8 @@ interface ProfileContext {
   level: number;
   momentum: number;
   currentWorld: string;
-  futureSelves?: any[];
-  attributes: any[];
+  futureSelves?: { vision?: string; isActive?: boolean }[];
+  attributes: { attributeId: string; level: number }[];
 }
 
 /**
@@ -56,9 +56,9 @@ No markdown wrapping, just the JSON string.
 `;
 
   const lowestAttributes = [...profile.attributes]
-    .sort((a: any, b: any) => a.level - b.level)
+    .sort((a: { attributeId: string; level: number }, b: { attributeId: string; level: number }) => a.level - b.level)
     .slice(0, 3)
-    .map((a: any) => a.attributeId)
+    .map((a: { attributeId: string }) => a.attributeId)
     .join(", ");
   
   const userPrompt = `

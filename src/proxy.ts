@@ -16,9 +16,9 @@ export async function proxy(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet: any[]) {
-          cookiesToSet.forEach(({ name, value, options }: any) => {
-            response.cookies.set(name, value, options);
+        setAll(cookiesToSet: { name: string; value: string; options?: unknown }[]) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options as never);
           });
         },
       },

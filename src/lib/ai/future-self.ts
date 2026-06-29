@@ -37,7 +37,7 @@ export async function calculateAlignmentScore(profileId: string) {
       // Default: base it on player level vs target level
       attributeScore = Math.min(100, (profile.level / activeFutureSelf.targetLevel) * 100) * 0.5;
     }
-  } catch (e) {
+  } catch {
     attributeScore = Math.min(100, (profile.level / activeFutureSelf.targetLevel) * 100) * 0.5;
   }
 

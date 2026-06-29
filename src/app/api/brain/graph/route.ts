@@ -8,7 +8,7 @@ export async function GET() {
     const graphData = await buildKnowledgeGraph(profile.id);
     
     return NextResponse.json(graphData);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to build graph' }, { status: 500 });
   }
 }

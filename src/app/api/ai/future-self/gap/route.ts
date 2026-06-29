@@ -8,7 +8,7 @@ export async function GET() {
     const analysis = await generateGapAnalysis(profile.id);
     
     return NextResponse.json({ analysis });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to generate gap analysis' }, { status: 500 });
   }
 }

@@ -26,7 +26,19 @@ export default async function Dashboard() {
   const momentumTier = getMomentumTier(profile.momentum);
 
   // Fetch bosses for dashboard widget
-  let activeBosses: any[] = [];
+interface BossWithSubTasks {
+  id: string;
+  name: string;
+  difficulty: string;
+  maxHp: number;
+  currentHp: number;
+  subtasks: { id: string; title: string; damage: number; isCompleted: boolean }[];
+  xpReward: number;
+  goldReward: number;
+  description?: string | null;
+}
+
+  let activeBosses: BossWithSubTasks[] = [];
   try {
     activeBosses = await prisma.boss.findMany({
       where: { profileId: profile.id, isDefeated: false },
@@ -37,7 +49,7 @@ export default async function Dashboard() {
     // DB unavailable during build or runtime
   }
 
-  let habits: any[] = [];
+  let habits: { id: string; name: string; currentStreak: number; lastCompletedAt: Date | null }[] = [];
   try {
     habits = await prisma.habit.findMany({
       where: { profileId: profile.id },
@@ -257,7 +269,7 @@ export default async function Dashboard() {
                   (boss.currentHp / boss.maxHp) * 100
                 );
                 const completedTasks = boss.subtasks.filter(
-                  (s: any) => s.isCompleted
+                  (s: { isCompleted: boolean }) => s.isCompleted
                 ).length;
                 return (
                   <div

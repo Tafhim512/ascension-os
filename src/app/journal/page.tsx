@@ -1,15 +1,16 @@
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Calendar, Zap, Smile } from "lucide-react";
+import { BookOpen, Calendar, Zap } from "lucide-react";
 import { CreateJournalModal } from "@/components/journal/create-journal-modal";
+import type { JournalEntry } from "@prisma/client";
 
 export const dynamic = 'force-dynamic';
 
 export default async function JournalPage() {
   const profile = await getCurrentProfile();
 
-  let entries: any[] = [];
+  let entries: JournalEntry[] = [];
   try {
     entries = await prisma.journalEntry.findMany({
       where: { profileId: profile.id },

@@ -62,7 +62,7 @@ export interface MemoryItem {
   content: string;
   date: Date;
   similarity: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // ─── SEMANTIC SEARCH ────────────────────────────────────────

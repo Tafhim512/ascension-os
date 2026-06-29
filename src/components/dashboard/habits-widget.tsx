@@ -6,7 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createHabit, completeHabit } from "@/app/actions";
 import { useRouter } from "next/navigation";
 
-export function HabitsWidget({ habits }: { habits: any[] }) {
+interface Habit {
+  id: string;
+  name: string;
+  currentStreak: number;
+  lastCompletedAt: Date | null;
+}
+
+export function HabitsWidget({ habits }: { habits: Habit[] }) {
   const [isAdding, setIsAdding] = useState(false);
   const [newHabit, setNewHabit] = useState("");
   const [isPending, startTransition] = useTransition();

@@ -45,11 +45,11 @@ export function XpChart() {
   );
 }
 
-export function AttributeRadar({ profile }: { profile: any }) {
+export function AttributeRadar({ profile }: { profile: { attributes: { attributeId: string; level: number }[] } }) {
   // Format attributes for Recharts
   const formatData = profile.attributes
     .slice(0, 6) // Radar charts get messy with too many points
-    .map((a: any) => ({
+    .map((a: { attributeId: string; level: number }) => ({
       subject: a.attributeId.substring(0, 3), // short name
       full: a.attributeId,
       A: a.level,
@@ -72,7 +72,7 @@ export function AttributeRadar({ profile }: { profile: any }) {
                 <Radar name="Level" dataKey="A" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.5} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '8px' }}
-                  labelFormatter={(v) => formatData.find((d: any) => d.subject === v)?.full || v}
+                  labelFormatter={(v) => formatData.find((d: { subject: string; full: string }) => d.subject === v)?.full || v}
                 />
               </RadarChart>
             </ResponsiveContainer>

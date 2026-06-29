@@ -33,8 +33,8 @@ export async function createFutureSelf(data: {
     revalidatePath("/future-self");
     revalidatePath("/");
     return { success: true };
-  } catch (error) {
-    console.error("Failed to create future self", error);
+  } catch {
+    console.error("Failed to create future self");
     return { success: false };
   }
 }
@@ -58,7 +58,7 @@ export async function setActiveFutureSelf(id: string) {
     revalidatePath("/future-self");
     revalidatePath("/");
     return { success: true };
-  } catch (error) {
+  } catch {
     return { success: false };
   }
 }

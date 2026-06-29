@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, Target, Clock, Zap, ChevronDown } from "lucide-react";
+import { Plus, X, Target, Clock, Zap } from "lucide-react";
 import { createQuest } from "@/app/actions";
 
 const QUEST_TYPES = ["MAIN", "DAILY", "SIDE", "ADVENTURE", "LEGENDARY"];

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, BookOpen, Smile, Meh, Frown, Zap, Battery, BatteryLow } from "lucide-react";
+import { Plus, X, BookOpen } from "lucide-react";
 import { createJournalEntry } from "@/app/actions";
 
 const MOODS = [

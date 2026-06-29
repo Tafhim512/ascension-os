@@ -57,12 +57,12 @@ export function KnowledgeGraph() {
       if (alpha > 0.01) {
          // Repulsion
          for (let i = 0; i < data.nodes.length; i++) {
-            for (let j = i + 1; j < data.nodes.length; j++) {
-               const n1 = data.nodes[i];
-               const n2 = data.nodes[j];
-               
-               let dx = n2.x! - n1.x!;
-               let dy = n2.y! - n1.y!;
+             for (let j = i + 1; j < data.nodes.length; j++) {
+                const n1 = data.nodes[i];
+                const n2 = data.nodes[j];
+                
+                const dx = n2.x! - n1.x!;
+                const dy = n2.y! - n1.y!;
                let dist = Math.sqrt(dx * dx + dy * dy);
                if (dist === 0) dist = 0.01;
                
@@ -77,12 +77,12 @@ export function KnowledgeGraph() {
          }
 
          // Attraction (Links)
-         data.links.forEach(link => {
-            const source = data.nodes.find(n => n.id === link.source);
-            const target = data.nodes.find(n => n.id === link.target);
-            if (source && target) {
-               let dx = target.x! - source.x!;
-               let dy = target.y! - source.y!;
+          data.links.forEach(link => {
+             const source = data.nodes.find(n => n.id === link.source);
+             const target = data.nodes.find(n => n.id === link.target);
+             if (source && target) {
+                const dx = target.x! - source.x!;
+                const dy = target.y! - source.y!;
                let dist = Math.sqrt(dx * dx + dy * dy);
                if (dist === 0) dist = 0.01;
 
@@ -96,10 +96,10 @@ export function KnowledgeGraph() {
             }
          });
 
-         // Center gravity
-         data.nodes.forEach(n => {
-            let dx = (width / 2) - n.x!;
-            let dy = (height / 2) - n.y!;
+          // Center gravity
+          data.nodes.forEach(n => {
+             const dx = (width / 2) - n.x!;
+             const dy = (height / 2) - n.y!;
             n.vx! += dx * 0.02 * alpha;
             n.vy! += dy * 0.02 * alpha;
 

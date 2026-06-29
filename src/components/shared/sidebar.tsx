@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Target, Activity, Map, Settings, BookOpen, Shield, Sword, BarChart2, Brain, Cpu, Menu } from 'lucide-react';
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useProfile } from "@/hooks/use-profile";
 import { useState } from "react";
@@ -24,12 +24,11 @@ const navItems = [
   { icon: Settings, label: 'Settings', href: '/settings' },
 ];
 
-export function Sidebar() {
+function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { profile, loading } = useProfile();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const SidebarContent = () => (
+  return (
     <>
       <div className="p-4 md:p-6">
         <h1 className="text-lg md:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accent-cyan to-accent-blue tracking-widest">
@@ -42,7 +41,7 @@ export function Sidebar() {
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)}>
+              <Link key={item.href} href={item.href} onClick={onNavigate}>
                 <div className={`flex items-center space-x-3 px-3 md:px-4 py-2.5 md:py-3 rounded-lg transition-all duration-300 ${
                   isActive
                     ? 'bg-accent-blue/10 text-accent-cyan border border-accent-blue/20 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
@@ -76,6 +75,10 @@ export function Sidebar() {
       </div>
     </>
   );
+}
+
+export function Sidebar() {
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <>
@@ -105,7 +108,7 @@ export function Sidebar() {
             onClick={() => setMobileOpen(false)}
           />
           <div className="relative w-64 h-full bg-bg-primary border-r border-border flex flex-col shadow-2xl">
-            <SidebarContent />
+            <SidebarContent onNavigate={() => setMobileOpen(false)} />
           </div>
         </div>
       )}

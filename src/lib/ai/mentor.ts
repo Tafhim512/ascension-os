@@ -1,3 +1,4 @@
+import type { Profile } from "@prisma/client";
 import { callAI } from "./client";
 import { searchMemories, formatMemoriesForPrompt } from "./memory";
 
@@ -8,7 +9,7 @@ import { searchMemories, formatMemoriesForPrompt } from "./memory";
  * journal entries, knowledge, and projects to ground its advice
  * in the user's own lived experience and data.
  */
-export async function getAiInsight(profile: any) {
+export async function getAiInsight(profile: Profile & { futureSelves?: { vision?: string }[] }) {
   // Build a context query from the user's current state
   const contextQuery = `${profile.playerName} level ${profile.level} momentum ${profile.momentum} streak ${profile.currentStreak} days current struggles and progress`;
   
@@ -52,7 +53,7 @@ Based on their stats AND their own memories above, deliver ONE precise, evidence
   try {
     const rawResponse = await callAI(systemPrompt, userPrompt);
     return rawResponse.replace(/^["']|["']$/g, '');
-  } catch (err) {
+  } catch {
     return "Data insufficient for full behavioral mapping. Increase operational volume.";
   }
 }
