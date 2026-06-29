@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSupabaseAuth } from "@/hooks/use-supabase-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,15 +10,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export function SignupForm() {
+  const router = useRouter();
   const [playerName, setPlayerName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const { signUp, loading } = useSupabaseAuth();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
     if (!playerName.trim()) {
       setError("Player name is required.");
       return;
@@ -25,6 +29,11 @@ export function SignupForm() {
     const result = await signUp(email, password, playerName.trim());
     if (result?.error) {
       setError(result.error);
+    } else if (result?.needsConfirmation) {
+      setSuccess("Account created! Please check your email to confirm, then come back and log in.");
+    } else {
+      setSuccess("Account created! Logging you in...");
+      setTimeout(() => router.push("/"), 1000);
     }
   }
 
@@ -78,6 +87,9 @@ export function SignupForm() {
           </div>
           {error && (
             <p className="text-xs text-accent-crimson">{error}</p>
+          )}
+          {success && (
+            <p className="text-xs text-accent-emerald">{success}</p>
           )}
           <Button
             type="submit"

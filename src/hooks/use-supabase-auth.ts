@@ -25,16 +25,19 @@ export function useSupabaseAuth() {
     }
 
     if (data.user) {
-      await fetch("/api/profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: data.user.id, playerName }),
-      });
+      try {
+        await fetch("/api/profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: data.user.id, playerName }),
+        });
+      } catch {
+        // profile will be created later on login if needed
+      }
     }
 
     setLoading(false);
-    router.push("/login?message=Check your email to confirm");
-    return { success: true };
+    return { success: true, needsConfirmation: !data.session };
   }
 
   async function signIn(email: string, password: string) {
@@ -48,18 +51,21 @@ export function useSupabaseAuth() {
     setLoading(false);
     if (error) {
       if (error.message.includes("Email not confirmed")) {
-        return { error: "Please verify your email address before logging in. Check your inbox." };
+        return { error: "Please verify your email before logging in." };
       }
       return { error: error.message };
     }
 
     if (data.user) {
-      // Fallback: If for some reason the profile wasn't created during signup, try now
-      await fetch("/api/profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: data.user.id, playerName: email.split("@")[0] }),
-      });
+      try {
+        await fetch("/api/profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: data.user.id, playerName: email.split("@")[0] }),
+        });
+      } catch {
+        // continue anyway
+      }
     }
 
     router.push("/");
