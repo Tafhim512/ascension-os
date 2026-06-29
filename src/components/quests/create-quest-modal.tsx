@@ -40,10 +40,13 @@ export function CreateQuestModal({ attributes = [] }: CreateQuestModalProps) {
   const [identityTag, setIdentityTag] = useState("");
   const [targetAttribute, setTargetAttribute] = useState("");
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleSubmit = () => {
     if (!title.trim()) return;
+    setError(null);
     startTransition(async () => {
-      await createQuest({
+      const result = await createQuest({
         title: title.trim(),
         description: description.trim() || undefined,
         type,
@@ -56,6 +59,10 @@ export function CreateQuestModal({ attributes = [] }: CreateQuestModalProps) {
           ? JSON.stringify([{ attributeId: targetAttribute, xp: Math.floor((XP_PRESETS[difficulty] || 25) / 2) }])
           : undefined,
       });
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
       setTitle("");
       setDescription("");
       setType("DAILY");
@@ -111,8 +118,13 @@ export function CreateQuestModal({ attributes = [] }: CreateQuestModalProps) {
                 </button>
               </div>
 
-              {/* Body */}
-              <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
+               {/* Body */}
+               <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
+                 {error && (
+                   <div className="p-3 rounded-lg border border-accent-crimson/30 bg-accent-crimson/10 text-accent-crimson text-xs">
+                     {error}
+                   </div>
+                 )}
                 {/* Title */}
                 <div>
                   <label className="text-xs font-bold text-text-muted uppercase tracking-wider block mb-2">Quest Title</label>

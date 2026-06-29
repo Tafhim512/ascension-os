@@ -113,14 +113,12 @@ export async function getCurrentProfile() {
 
         if (profile) return profile;
       } catch {
-        // DB not available yet, fall through to fallback
+        // DB not available yet
       }
 
       return FALLBACK_PROFILE as any;
     }
 
-    // IMPORTANT: Fetch explicitly using Prisma rather than Supabase Client
-    // to ensure type compatibility with Server Actions mapping expectations.
     const profile = await prisma.profile.findUnique({
       where: { userId: user.id },
       include: {
@@ -132,10 +130,64 @@ export async function getCurrentProfile() {
       },
     });
 
-    if (profile) return profile;
-  } catch {
-    // Supabase or DB unavailable, fall through to fallback
-  }
+    if (!profile) {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/profile?userId=${encodeURIComponent(user.id)}`, {
+          headers: { cookie: (globalThis as any).process?.env?.COOKIE || "" },
+          // Server-side fetch can't send cookies easily; rely on the catch below to create via signed request if needed
+        });
+        if (res.ok) {
+          const { profile: created } = await res.json();
+          if (created) return created;
+        }
+      } catch {
+        // ignore, try direct create below
+      }
 
-  return FALLBACK_PROFILE as any;
+      const fresh = await prisma.profile.create({
+        data: {
+          userId: user.id,
+          playerName: user.email?.split("@")[0] || "Player",
+          attributes: {
+            create: [
+              { attributeId: "BODY", level: 1, currentXp: 0 },
+              { attributeId: "INTELLIGENCE", level: 1, currentXp: 0 },
+              { attributeId: "DISCIPLINE", level: 1, currentXp: 0 },
+              { attributeId: "WISDOM", level: 1, currentXp: 0 },
+              { attributeId: "COMMUNICATION", level: 1, currentXp: 0 },
+              { attributeId: "AI_ENGINEERING", level: 1, currentXp: 0 },
+              { attributeId: "SOFTWARE_ENGINEERING", level: 1, currentXp: 0 },
+              { attributeId: "PRODUCT_BUILDING", level: 1, currentXp: 0 },
+              { attributeId: "BUSINESS", level: 1, currentXp: 0 },
+              { attributeId: "LEADERSHIP", level: 1, currentXp: 0 },
+              { attributeId: "CREATIVITY", level: 1, currentXp: 0 },
+              { attributeId: "RELATIONSHIPS", level: 1, currentXp: 0 },
+              { attributeId: "FINANCE", level: 1, currentXp: 0 },
+              { attributeId: "EMOTIONAL_CONTROL", level: 1, currentXp: 0 },
+            ],
+          },
+          futureSelves: {
+            create: {
+              vision: "I am ready to transform.",
+              alignmentScore: 0,
+            },
+          },
+        },
+        include: {
+          attributes: true,
+          futureSelves: true,
+          titles: true,
+          achievements: true,
+          quests: true,
+        },
+      });
+
+      return fresh;
+    }
+
+    return profile;
+  } catch {
+    // Supabase or DB unavailable
+    return FALLBACK_PROFILE as any;
+  }
 }
