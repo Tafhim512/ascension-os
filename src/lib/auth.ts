@@ -119,22 +119,20 @@ export async function getCurrentProfile() {
       return FALLBACK_PROFILE as any;
     }
 
-    const { data: profile, error } = await supabase
-      .from("profile")
-      .select(
-        `
-        *,
-        attributes (*),
-        futureSelves (*),
-        titles (*),
-        achievements (*),
-        quests (*)
-      `
-      )
-      .eq("userId", user.id)
-      .single();
+    // IMPORTANT: Fetch explicitly using Prisma rather than Supabase Client
+    // to ensure type compatibility with Server Actions mapping expectations.
+    const profile = await prisma.profile.findUnique({
+      where: { userId: user.id },
+      include: {
+        attributes: true,
+        futureSelves: true,
+        titles: true,
+        achievements: true,
+        quests: true,
+      },
+    });
 
-    if (!error && profile) return profile;
+    if (profile) return profile;
   } catch {
     // Supabase or DB unavailable, fall through to fallback
   }
