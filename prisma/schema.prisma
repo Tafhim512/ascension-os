@@ -1,0 +1,644 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS as String constants for SQLite compat
+// ============================================
+// HunterRank: F, E, D, C, B, A, S, SS, SSS
+// QuestType: MAIN, DAILY, SIDE, ADVENTURE, LEGENDARY, SECRET, SEASONAL, RECOVERY
+// QuestDifficulty: COMMON, RARE, EPIC, LEGENDARY, MYTHIC
+// BossPhase: PHASE_1, PHASE_2, PHASE_3, PHASE_4, PHASE_5
+// ProjectType: SOFTWARE, AI_AGENT, AI_SAAS, WEBSITE, ...
+// WorldId: THE_WEAK, THE_STUDENT, THE_BUILDER, ...
+// AttributeId: BODY, INTELLIGENCE, DISCIPLINE, ...
+
+// ============================================
+// USER & CHARACTER
+// ============================================
+
+model Profile {
+  id                String      @id @default(uuid())
+  userId            String      @unique // references auth.users.id
+  playerName        String
+  avatarUrl         String?
+  
+  // Progression
+  level             Int         @default(1)
+  currentXp         Int         @default(0)
+  lifetimeXp        Int         @default(0)
+  hunterRank        String      @default("F")
+  powerScore        Int         @default(0)
+  currentTitle      String      @default("The Beginner")
+  currentWorld      String      @default("THE_WEAK")
+  currentChapter    Int         @default(1)
+  chapterTitle      String      @default("The Awakening")
+  
+  // Streaks
+  currentStreak     Int         @default(0)
+  longestStreak     Int         @default(0)
+  lastActiveDate    DateTime?
+  
+  // Economy
+  gold              Int         @default(0)
+  reputation        Int         @default(0)
+  legacyScore       Int         @default(0)
+  knowledgePoints   Int         @default(0)
+  builderPoints     Int         @default(0)
+  
+  // Status
+  momentum          Float       @default(0)
+  energy            Float       @default(100)
+  focusScore        Float       @default(0)
+  healthScore       Float       @default(0)
+  currentMood       String?
+  
+  // Lifetime Stats
+  lifetimeQuests    Int         @default(0)
+  lifetimeBosses    Int         @default(0)
+  lifetimeBooks     Int         @default(0)
+  lifetimeWorkouts  Int         @default(0)
+  lifetimeCodingHrs Float       @default(0)
+  lifetimeDeepWork  Float       @default(0)
+  lifetimeJournals  Int         @default(0)
+  lifetimeLearning  Float       @default(0)
+  lifetimeProjects  Int         @default(0)
+  
+  // Customization
+  profileFrame      String?
+  backgroundTheme   String?
+  particleEffect    String?
+  soundTheme        String?
+  
+  settings          String      @default("{}") // SQLite JSON replacement
+  
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  
+  attributes        Attribute[]
+  quests            Quest[]
+  bosses            Boss[]
+  enemies           EnemyProgress[]
+  projects          Project[]
+  books             Book[]
+  courses           Course[]
+  journalEntries    JournalEntry[]
+  knowledgeItems    KnowledgeItem[]
+  achievements      UserAchievement[]
+  titles            UserTitle[]
+  identities        UserIdentity[]
+  futureSelves      FutureSelf[]
+  xpHistory         XpEvent[]
+  streakHistory     StreakRecord[]
+  notifications     Notification[]
+  rewards           UserReward[]
+  habits            Habit[]
+  
+  @@index([userId])
+}
+
+// ============================================
+// ATTRIBUTES & SKILLS
+// ============================================
+
+model Attribute {
+  id              String        @id @default(uuid())
+  profileId       String
+  profile         Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  attributeId     String
+  level           Int           @default(1)
+  currentXp       Int           @default(0)
+  lifetimeXp      Int           @default(0)
+  
+  consistencyScore Float        @default(0)
+  weeklyProgress  Float         @default(0)
+  monthlyProgress Float         @default(0)
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  subSkills       SubSkill[]
+  history         AttributeHistory[]
+  skillNodes      SkillNode[]
+  
+  @@unique([profileId, attributeId])
+  @@index([profileId])
+}
+
+model SubSkill {
+  id              String        @id @default(uuid())
+  attributeId     String
+  attribute       Attribute     @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  
+  name            String
+  level           Int           @default(1)
+  currentXp       Int           @default(0)
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@unique([attributeId, name])
+  @@index([attributeId])
+}
+
+model AttributeHistory {
+  id              String        @id @default(uuid())
+  attributeId     String
+  attribute       Attribute     @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  
+  date            DateTime      @default(now())
+  xpGained        Int
+  levelAtTime     Int
+  source          String        // quest/boss/manual
+  sourceId        String?
+  
+  @@index([attributeId, date])
+}
+
+model SkillNode {
+  id              String        @id @default(uuid())
+  attributeId     String
+  attribute       Attribute     @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  
+  name            String
+  description     String
+  tier            Int           @default(1)
+  xpRequired      Int
+  currentXp       Int           @default(0)
+  isUnlocked      Boolean       @default(false)
+  isCompleted     Boolean       @default(false)
+  
+  positionX       Float         @default(0)
+  positionY       Float         @default(0)
+  
+  prerequisiteIds String        @default("[]") // Array serialize
+  
+  reward          String?
+  realWorldBenefit String?
+  estimatedTime   String?
+  difficulty      String        @default("COMMON")
+  
+  unlockedAt      DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@unique([attributeId, name])
+  @@index([attributeId])
+}
+
+// ============================================
+// QUESTS
+// ============================================
+
+model Quest {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  title           String
+  description     String?
+  type            String
+  difficulty      String
+  
+  xpReward        Int
+  goldReward      Int             @default(0)
+  reputationReward Int            @default(0)
+  attributeRewards String         @default("[]") // JSON string
+  
+  scheduledDate   DateTime?
+  deadline        DateTime?
+  estimatedMinutes Int?
+  
+  isCompleted     Boolean         @default(false)
+  isActive        Boolean         @default(true)
+  completedAt     DateTime?
+  
+  identityTag     String?         // "Athlete", "Builder", etc.
+  
+  isAiGenerated   Boolean         @default(false)
+  aiContext       String?         // JSON string
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([profileId, scheduledDate])
+  @@index([profileId, isCompleted])
+  @@index([profileId, type])
+}
+
+// ============================================
+// BOSSES & ENEMIES
+// ============================================
+
+model Boss {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  name            String
+  description     String?
+  difficulty      String
+  
+  maxHp           Int
+  currentHp       Int
+  
+  totalPhases     Int             @default(1)
+  currentPhase    Int             @default(1)
+  phases          String          @default("[]") // JSON string
+  
+  deadline        DateTime?
+  
+  weaknesses      String          @default("[]") // Array string
+  requiredSkills  String          @default("[]") // Array string
+  
+  xpReward        Int
+  goldReward      Int             @default(0)
+  titleReward     String?
+  achievementId   String?
+  
+  isDefeated      Boolean         @default(false)
+  isWorldBoss     Boolean         @default(false)
+  defeatedAt      DateTime?
+  
+  imageUrl        String?
+  
+  subtasks        BossSubtask[]
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([profileId, isDefeated])
+}
+
+model BossSubtask {
+  id              String          @id @default(uuid())
+  bossId          String
+  boss            Boss            @relation(fields: [bossId], references: [id], onDelete: Cascade)
+  
+  title           String
+  damage          Int
+  isCompleted     Boolean         @default(false)
+  completedAt     DateTime?
+  
+  @@index([bossId])
+}
+
+model EnemyProgress {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  enemyName       String
+  maxHp           Int
+  currentHp       Int
+  weakness        String          @default("[]") // Array string
+  currentInfluence Float          @default(100)
+  
+  lastDamageDate  DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@unique([profileId, enemyName])
+}
+
+// ============================================
+// LEGACY & KNOWLEDGE
+// ============================================
+
+model Project {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  name            String
+  description     String?
+  type            String
+  status          String          @default("active")
+  
+  startDate       DateTime        @default(now())
+  completionDate  DateTime?
+  progress        Float           @default(0)
+  
+  technologies    String          @default("[]")
+  repositoryUrl   String?
+  lessonsLearned  String          @default("[]")
+  screenshots     String          @default("[]")
+  
+  aiSummary       String?
+  embedding       String?         // JSON-serialized Float[] for local RAG
+  metrics         String          @default("{}") // Startup/Growth metrics JSON
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([profileId, status])
+}
+
+model Book {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  title           String
+  author          String?
+  coverUrl        String?
+  category        String?
+  
+  totalPages      Int?
+  currentPage     Int             @default(0)
+  progress        Float           @default(0)
+  rating          Int?
+  
+  status          String          @default("reading")
+  
+  notes           String?
+  highlights      String          @default("[]") // JSON string
+  keyIdeas        String          @default("[]")
+  actionItems     String          @default("[]")
+  aiSummary       String?
+  
+  startDate       DateTime?
+  completionDate  DateTime?
+  
+  relatedSkills   String          @default("[]")
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([profileId, status])
+}
+
+model Course {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  name            String
+  instructor      String?
+  provider        String?
+  progress        Float           @default(0)
+  isCompleted     Boolean         @default(false)
+  certificateUrl  String?
+  notes           String?
+  relatedSkills   String          @default("[]")
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([profileId])
+}
+
+model JournalEntry {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  content         String
+  mood            String?
+  energyLevel     Float?
+  
+  tags            String          @default("[]")
+  aiReflection    String?
+  embedding       String?         // JSON-serialized Float[] for local RAG
+  
+  date            DateTime        @default(now())
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([profileId, date])
+}
+
+model KnowledgeItem {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  title           String
+  content         String
+  source          String?
+  category        String?
+  tags            String          @default("[]")
+  
+  keyIdeas        String          @default("[]")
+  connections     String          @default("[]")
+  relatedSkills   String          @default("[]")
+  
+  aiReflection    String?
+  embedding       String?         // JSON-serialized Float[] for local RAG
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([profileId])
+}
+
+// ============================================
+// ACHIEVEMENTS & TITLES
+// ============================================
+
+model Achievement {
+  id              String          @id @default(uuid())
+  
+  name            String          @unique
+  description     String
+  category        String
+  rarity          String
+  
+  requirement     String          // JSON string
+  
+  iconUrl         String?
+  
+  users           UserAchievement[]
+  
+  createdAt       DateTime        @default(now())
+}
+
+model UserAchievement {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  achievementId   String
+  achievement     Achievement     @relation(fields: [achievementId], references: [id])
+  
+  unlockedAt      DateTime        @default(now())
+  reflection      String?
+  
+  @@unique([profileId, achievementId])
+  @@index([profileId])
+}
+
+model Title {
+  id              String          @id @default(uuid())
+  
+  name            String          @unique
+  description     String
+  requirement     String          // JSON string
+  
+  users           UserTitle[]
+  
+  createdAt       DateTime        @default(now())
+}
+
+model UserTitle {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  titleId         String
+  title           Title           @relation(fields: [titleId], references: [id])
+  
+  unlockedAt      DateTime        @default(now())
+  
+  @@unique([profileId, titleId])
+  @@index([profileId])
+}
+
+// ============================================
+// IDENTITY SYSTEM
+// ============================================
+
+model UserIdentity {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  name            String
+  tier            Int             @default(1)
+  progress        Float           @default(0)
+  isUnlocked      Boolean         @default(false)
+  unlockedAt      DateTime?
+  
+  requirement     String          // JSON string
+  evolutionPath   String          @default("[]") // JSON string
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@unique([profileId, name])
+  @@index([profileId])
+}
+
+// ============================================
+// FUTURE SELF
+// ============================================
+
+model FutureSelf {
+  id              String          @id @default(uuid())
+  profileId       String          
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  archetype       String          @default("Visionary")
+  vision          String
+  targets         String          @default("[]") // JSON string
+  targetAttributes String         @default("{}") // JSON string (Attribute ID to Target Level)
+  targetLevel     Int             @default(100)
+  alignmentScore  Float           @default(0)
+  isActive        Boolean         @default(true)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([profileId])
+}
+
+// ============================================
+// XP & PROGRESSION EVENTS
+// ============================================
+
+model XpEvent {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  amount          Int
+  source          String
+  sourceId        String?
+  description     String?
+  
+  levelBefore     Int
+  levelAfter      Int
+  
+  createdAt       DateTime        @default(now())
+  
+  @@index([profileId, createdAt])
+}
+
+model StreakRecord {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  category        String
+  currentStreak   Int             @default(0)
+  longestStreak   Int             @default(0)
+  lastActiveDate  DateTime?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@unique([profileId, category])
+  @@index([profileId])
+}
+
+// ============================================
+// REWARDS & NOTIFICATIONS
+// ============================================
+
+model UserReward {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  name            String
+  description     String?
+  goldCost        Int
+  isRedeemed      Boolean         @default(false)
+  redeemedAt      DateTime?
+  
+  createdAt       DateTime        @default(now())
+  
+  @@index([profileId])
+}
+
+model Notification {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  type            String
+  title           String
+  message         String
+  isRead          Boolean         @default(false)
+  data            String?         // JSON string
+  
+  createdAt       DateTime        @default(now())
+  
+  @@index([profileId, isRead])
+}
+
+// ─── CHRONOS ENGINE: HABIT TRACKING (V9) ───
+model Habit {
+  id              String          @id @default(uuid())
+  profileId       String
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  name            String
+  identityTag     String?         // E.g., "The Writer"
+  frequency       String          @default("DAILY")
+  
+  currentStreak   Int             @default(0)
+  longestStreak   Int             @default(0)
+  totalCompletions Int            @default(0)
+  lastCompletedAt DateTime?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([profileId])
+}

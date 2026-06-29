@@ -1,0 +1,60 @@
+[   11038ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[   11255ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[   14302ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/avatar.png:0
+[   15241ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[   45731ms] [ERROR] In HTML, %s cannot be a descendant of <%s>.
+This will cause a hydration error.%s <button> button 
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/future-self" tree={[...]} params={{}} cacheNode={{rsc:<Fragment>, ...}} ...>
+        <SegmentViewNode type="page" pagePath="future-sel...">
+          <SegmentTrieNode>
+          <FutureSelfPage>
+            <div className="p-4 md:p-1...">
+              <header className="flex flex-...">
+                <div>
+                <VisionEditor>
+                  <Dialog open={false} onOpenChange={function bound dispatchSetState}>
+                    <DialogRoot data-slot="dialog" open={false} onOpenChange={function bound dispatchSetState}>
+                      <DialogTrigger>
+                        <DialogTrigger data-slot="dialog-tri...">
+>                         <button
+>                           type="button"
+>                           onClick={function}
+>                           onMouseDown={function}
+>                           onKeyDown={function}
+>                           onKeyUp={function}
+>                           onPointerDown={function}
+>                           tabIndex={0}
+>                           disabled={false}
+>                           data-base-ui-click-trigger=""
+>                           id="base-ui-_r_1_"
+>                           aria-haspopup="dialog"
+>                           aria-expanded={false}
+>                           aria-controls={undefined}
+>                           data-slot="dialog-trigger"
+>                           ref={function}
+>                         >
+                            <Button className="bg-accent-...">
+                              <Button data-slot="button" className={"group/bu..."}>
+>                               <button
+>                                 type="button"
+>                                 onClick={function}
+>                                 onMouseDown={function}
+>                                 onKeyDown={function}
+>                                 onKeyUp={function}
+>                                 onPointerDown={function}
+>                                 tabIndex={0}
+>                                 disabled={false}
+>                                 data-slot="button"
+>                                 ref={function}
+>                                 className={"group/button inline-flex shrink-0 items-center justify-center rounded-l..."}
+>                               >
+                      ...
+              ...
+        ...
+      ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:3318
+[   45733ms] [ERROR] <%s> cannot contain a nested %s.
+See this log for the ancestor stack trace. button <button> @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:3318

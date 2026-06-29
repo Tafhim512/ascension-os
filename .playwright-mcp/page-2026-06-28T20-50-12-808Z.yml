@@ -1,0 +1,138 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - heading "ASCENSION OS" [level=1] [ref=e6]
+      - generic [ref=e8]:
+        - link "Command Center" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e10]:
+            - img [ref=e11]
+            - generic [ref=e16]: Command Center
+        - link "Quests" [ref=e17] [cursor=pointer]:
+          - /url: /quests
+          - generic [ref=e18]:
+            - img [ref=e19]
+            - generic [ref=e23]: Quests
+        - link "Attributes" [ref=e24] [cursor=pointer]:
+          - /url: /attributes
+          - generic [ref=e25]:
+            - img [ref=e26]
+            - generic [ref=e28]: Attributes
+        - link "Future Self" [ref=e29] [cursor=pointer]:
+          - /url: /future-self
+          - generic [ref=e30]:
+            - img [ref=e31]
+            - generic [ref=e35]: Future Self
+        - link "Second Brain" [ref=e36] [cursor=pointer]:
+          - /url: /brain
+          - generic [ref=e37]:
+            - img [ref=e38]
+            - generic [ref=e46]: Second Brain
+        - link "System Mentor" [ref=e47] [cursor=pointer]:
+          - /url: /mentor
+          - generic [ref=e48]:
+            - img [ref=e49]
+            - generic [ref=e52]: System Mentor
+        - link "Bosses" [ref=e53] [cursor=pointer]:
+          - /url: /bosses
+          - generic [ref=e54]:
+            - img [ref=e55]
+            - generic [ref=e57]: Bosses
+        - link "Journal" [ref=e58] [cursor=pointer]:
+          - /url: /journal
+          - generic [ref=e59]:
+            - img [ref=e60]
+            - generic [ref=e65]: Journal
+        - link "Legacy" [ref=e66] [cursor=pointer]:
+          - /url: /legacy
+          - generic [ref=e67]:
+            - img [ref=e68]
+            - generic [ref=e70]: Legacy
+        - link "World Map" [ref=e71] [cursor=pointer]:
+          - /url: /world
+          - generic [ref=e72]:
+            - img [ref=e73]
+            - generic [ref=e75]: World Map
+        - link "Analytics" [ref=e76] [cursor=pointer]:
+          - /url: /analytics
+          - generic [ref=e77]:
+            - img [ref=e78]
+            - generic [ref=e79]: Analytics
+        - link "Settings" [ref=e80] [cursor=pointer]:
+          - /url: /settings
+          - generic [ref=e81]:
+            - img [ref=e82]
+            - generic [ref=e85]: Settings
+      - generic [ref=e87]:
+        - generic [ref=e89]: Pl
+        - generic [ref=e90]:
+          - paragraph [ref=e91]: Player 1
+          - paragraph [ref=e92]: Rank F • Lvl 1
+    - main [ref=e93]:
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - heading "Boss Hunts" [level=1] [ref=e97]:
+              - img [ref=e98]
+              - text: Boss Hunts
+            - paragraph [ref=e100]: Take down massive projects and fearsome enemies by completing subtasks.
+          - button "New Boss" [active] [ref=e101]:
+            - img [ref=e102]
+            - text: New Boss
+          - generic [ref=e126]:
+            - generic [ref=e127]:
+              - generic [ref=e128]:
+                - img [ref=e130]
+                - generic [ref=e135]:
+                  - heading "Create Boss" [level=2] [ref=e136]
+                  - paragraph [ref=e137]: Define a massive challenge to conquer
+              - button [ref=e138]:
+                - img [ref=e139]
+            - generic [ref=e142]:
+              - generic [ref=e143]:
+                - generic [ref=e144]: Boss Name
+                - textbox "e.g. Final Exam, Project Launch" [ref=e145]
+              - generic [ref=e146]:
+                - generic [ref=e147]: Description
+                - textbox "What makes this boss fearsome?" [ref=e148]
+              - generic [ref=e149]:
+                - generic [ref=e150]:
+                  - generic [ref=e151]: Difficulty
+                  - generic [ref=e152]:
+                    - button "RARE" [ref=e153]
+                    - button "EPIC" [ref=e154]
+                    - button "LEGENDARY" [ref=e155]
+                    - button "MYTHIC" [ref=e156]
+                - generic [ref=e157]:
+                  - generic [ref=e158]: Deadline
+                  - textbox [ref=e159]
+              - generic [ref=e160]:
+                - generic [ref=e161]:
+                  - generic [ref=e162]:
+                    - img [ref=e163]
+                    - text: Attack Vectors (Subtasks)
+                  - button "+ Add" [ref=e168]
+                - generic [ref=e170]:
+                  - textbox "Subtask name" [ref=e171]
+                  - spinbutton [ref=e172]: "100"
+              - generic [ref=e173]:
+                - paragraph [ref=e174]: Boss Stats
+                - generic [ref=e175]:
+                  - generic [ref=e176]: "HP: 100"
+                  - generic [ref=e177]: "XP: 100"
+                  - generic [ref=e178]: 🪙 50
+            - generic [ref=e179]:
+              - button "Cancel" [ref=e180]
+              - button "Summon Boss" [disabled] [ref=e181]
+        - generic [ref=e103]:
+          - heading "Active Bosses 0" [level=2] [ref=e104]:
+            - text: Active Bosses
+            - generic [ref=e105]: "0"
+          - generic [ref=e107]:
+            - img [ref=e108]
+            - heading "No active bosses" [level=3] [ref=e113]
+            - paragraph [ref=e114]: The realm is safe for now.
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e120] [cursor=pointer]:
+    - img [ref=e121]
+  - alert [ref=e124]

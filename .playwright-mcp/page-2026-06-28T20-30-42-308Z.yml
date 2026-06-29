@@ -1,0 +1,122 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e6] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e7]:
+      - img [ref=e8]
+    - generic [ref=e11]:
+      - button "Open issues overlay" [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]: "2"
+          - generic [ref=e15]: "3"
+        - generic [ref=e16]:
+          - text: Issue
+          - generic [ref=e17]: s
+      - button "Collapse issues badge" [ref=e18]:
+        - img [ref=e19]
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - heading "ASCENSION OS" [level=1] [ref=e25]
+      - generic [ref=e27]:
+        - link "Command Center" [ref=e28] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e29]:
+            - img [ref=e30]
+            - generic [ref=e35]: Command Center
+        - link "Quests" [ref=e36] [cursor=pointer]:
+          - /url: /quests
+          - generic [ref=e37]:
+            - img [ref=e38]
+            - generic [ref=e42]: Quests
+        - link "Attributes" [ref=e43] [cursor=pointer]:
+          - /url: /attributes
+          - generic [ref=e44]:
+            - img [ref=e45]
+            - generic [ref=e47]: Attributes
+        - link "Future Self" [ref=e48] [cursor=pointer]:
+          - /url: /future-self
+          - generic [ref=e49]:
+            - img [ref=e50]
+            - generic [ref=e54]: Future Self
+        - link "Second Brain" [ref=e55] [cursor=pointer]:
+          - /url: /brain
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e65]: Second Brain
+        - link "System Mentor" [ref=e66] [cursor=pointer]:
+          - /url: /mentor
+          - generic [ref=e67]:
+            - img [ref=e68]
+            - generic [ref=e71]: System Mentor
+        - link "Bosses" [ref=e72] [cursor=pointer]:
+          - /url: /bosses
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e76]: Bosses
+        - link "Journal" [ref=e77] [cursor=pointer]:
+          - /url: /journal
+          - generic [ref=e78]:
+            - img [ref=e79]
+            - generic [ref=e84]: Journal
+        - link "Legacy" [ref=e85] [cursor=pointer]:
+          - /url: /legacy
+          - generic [ref=e86]:
+            - img [ref=e87]
+            - generic [ref=e89]: Legacy
+        - link "World Map" [ref=e90] [cursor=pointer]:
+          - /url: /world
+          - generic [ref=e91]:
+            - img [ref=e92]
+            - generic [ref=e94]: World Map
+        - link "Analytics" [ref=e95] [cursor=pointer]:
+          - /url: /analytics
+          - generic [ref=e96]:
+            - img [ref=e97]
+            - generic [ref=e98]: Analytics
+        - link "Settings" [ref=e99] [cursor=pointer]:
+          - /url: /settings
+          - generic [ref=e100]:
+            - img [ref=e101]
+            - generic [ref=e104]: Settings
+      - generic [ref=e106]:
+        - generic [ref=e108]: TF
+        - generic [ref=e109]:
+          - paragraph [ref=e110]: Tafhim
+          - paragraph [ref=e111]: Rank B • Lvl 10
+    - main [ref=e112]:
+      - generic [ref=e113]:
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - heading "The Future Self Engine" [level=1] [ref=e116]:
+              - img [ref=e117]
+              - text: The Future Self Engine
+            - paragraph [ref=e121]: Define who you are becoming. Measure the gap. Evolve.
+          - button "Defines New Future" [ref=e122]:
+            - button "Defines New Future" [ref=e123]:
+              - img
+              - text: Defines New Future
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - generic [ref=e126]:
+              - img [ref=e128]
+              - generic [ref=e131]:
+                - generic [ref=e132]: Active Archetype
+                - generic [ref=e133]: Visionary
+              - generic [ref=e135]:
+                - generic [ref=e136]:
+                  - generic [ref=e137]: Core Vision
+                  - paragraph [ref=e138]: “I am ready to transform.”
+                - generic [ref=e140]:
+                  - generic [ref=e141]: Target Level
+                  - generic [ref=e142]: "100"
+            - generic [ref=e144]:
+              - heading "Alignment Score" [level=3] [ref=e145]
+              - generic [ref=e146]:
+                - img [ref=e147]
+                - generic [ref=e151]: 0%
+              - paragraph [ref=e152]: Calculated from Attributes, Habits, and Momentum.
+          - generic [ref=e153]:
+            - generic [ref=e154]:
+              - img [ref=e155]
+              - heading "AI Gap Analysis" [level=2] [ref=e159]
+            - generic [ref=e160]: The System is analyzing your gap...
+  - region "Notifications alt+T"
+  - alert [ref=e161]
