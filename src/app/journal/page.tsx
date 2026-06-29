@@ -4,13 +4,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Calendar, Zap, Smile } from "lucide-react";
 import { CreateJournalModal } from "@/components/journal/create-journal-modal";
 
+export const dynamic = 'force-dynamic';
+
 export default async function JournalPage() {
   const profile = await getCurrentProfile();
-  
-  const entries = await prisma.journalEntry.findMany({
-    where: { profileId: profile.id },
-    orderBy: { date: 'desc' },
-  });
+
+  let entries: any[] = [];
+  try {
+    entries = await prisma.journalEntry.findMany({
+      where: { profileId: profile.id },
+      orderBy: { date: 'desc' },
+    });
+  } catch {
+    // DB unavailable
+  }
 
   return (
     <div className="p-4 md:p-10 space-y-8 animate-in fade-in duration-700">
@@ -58,7 +65,7 @@ export default async function JournalPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="prose prose-invert prose-p:text-text-secondary prose-p:leading-relaxed max-w-none text-sm">
-                    {entry.content.split('\n').map((paragraph, idx) => (
+                     {entry.content.split('\n').map((paragraph: string, idx: number) => (
                       <p key={idx} className="mb-2 last:mb-0">{paragraph}</p>
                     ))}
                   </div>

@@ -12,6 +12,8 @@ import { HabitsWidget } from "@/components/dashboard/habits-widget";
 import Link from "next/link";
 import type { Quest, Attribute, FutureSelf } from "@prisma/client";
 
+export const dynamic = 'force-dynamic';
+
 type ProfileWithRelations = Awaited<ReturnType<typeof getCurrentProfile>>;
 
 export default async function Dashboard() {
@@ -24,16 +26,26 @@ export default async function Dashboard() {
   const momentumTier = getMomentumTier(profile.momentum);
 
   // Fetch bosses for dashboard widget
-  const activeBosses = await prisma.boss.findMany({
-    where: { profileId: profile.id, isDefeated: false },
-    include: { subtasks: true },
-    take: 2,
-  });
+  let activeBosses: any[] = [];
+  try {
+    activeBosses = await prisma.boss.findMany({
+      where: { profileId: profile.id, isDefeated: false },
+      include: { subtasks: true },
+      take: 2,
+    });
+  } catch {
+    // DB unavailable during build or runtime
+  }
 
-  const habits = await prisma.habit.findMany({
-    where: { profileId: profile.id },
-    orderBy: { createdAt: 'asc' }
-  });
+  let habits: any[] = [];
+  try {
+    habits = await prisma.habit.findMany({
+      where: { profileId: profile.id },
+      orderBy: { createdAt: 'asc' }
+    });
+  } catch {
+    // DB unavailable during build or runtime
+  }
 
   // Active quests for feed
   const activeQuests: Quest[] = profile.quests
@@ -245,7 +257,7 @@ export default async function Dashboard() {
                   (boss.currentHp / boss.maxHp) * 100
                 );
                 const completedTasks = boss.subtasks.filter(
-                  (s) => s.isCompleted
+                  (s: any) => s.isCompleted
                 ).length;
                 return (
                   <div

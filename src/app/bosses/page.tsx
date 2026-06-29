@@ -5,17 +5,24 @@ import { Shield, Skull, Sword, Sparkles } from "lucide-react";
 import { CreateBossModal } from "@/components/bosses/create-boss-modal";
 import { BossSubtaskItem } from "@/components/bosses/boss-subtask-item";
 
+export const dynamic = 'force-dynamic';
+
 export default async function BossesPage() {
   const profile = await getCurrentProfile();
-  
-  const profileWithBosses = await prisma.profile.findUnique({
-    where: { id: profile.id },
-    include: { bosses: { include: { subtasks: true } } }
-  });
+
+  let profileWithBosses: any = null;
+  try {
+    profileWithBosses = await prisma.profile.findUnique({
+      where: { id: profile.id },
+      include: { bosses: { include: { subtasks: true } } },
+    });
+  } catch {
+    // DB unavailable
+  }
 
   const allBosses = profileWithBosses?.bosses || [];
-  const activeBosses = allBosses.filter(b => !b.isDefeated);
-  const defeatedBosses = allBosses.filter(b => b.isDefeated).sort((a, b) => new Date(b.defeatedAt!).getTime() - new Date(a.defeatedAt!).getTime());
+  const activeBosses: any[] = allBosses.filter((b: any) => !b.isDefeated);
+  const defeatedBosses: any[] = allBosses.filter((b: any) => b.isDefeated).sort((a: any, b: any) => new Date(b.defeatedAt!).getTime() - new Date(a.defeatedAt!).getTime());
 
   return (
     <div className="p-4 md:p-10 space-y-8 animate-in fade-in duration-700">
@@ -36,9 +43,9 @@ export default async function BossesPage() {
         </h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {activeBosses.map((boss) => {
+          {activeBosses.map((boss: any) => {
              const percentHp = Math.max(0, (boss.currentHp / boss.maxHp) * 100);
-             const completedCount = boss.subtasks.filter(s => s.isCompleted).length;
+             const completedCount = boss.subtasks.filter((s: any) => s.isCompleted).length;
              
              return (
               <Card key={boss.id} className="border-accent-crimson/30 bg-bg-elevated/60 backdrop-blur-md overflow-hidden relative group shadow-2xl">
@@ -89,7 +96,7 @@ export default async function BossesPage() {
                       <span className="text-text-secondary font-medium">{completedCount} / {boss.subtasks.length} Complete</span>
                     </div>
                     <div className="space-y-2">
-                      {boss.subtasks.map(task => (
+                      {boss.subtasks.map((task: any) => (
                         <BossSubtaskItem key={task.id} subtask={task} bossId={boss.id} />
                       ))}
                     </div>
@@ -120,7 +127,7 @@ export default async function BossesPage() {
             Defeated Bosses <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full">{defeatedBosses.length}</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {defeatedBosses.map((boss) => (
+            {defeatedBosses.map((boss: any) => (
               <div key={boss.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-accent-gold/5 border border-accent-gold/20 rounded-lg">
                 <div className="flex items-center gap-3 mb-2 sm:mb-0">
                   <Sparkles className="w-5 h-5 text-accent-gold shrink-0" />

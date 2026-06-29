@@ -1,24 +1,36 @@
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { Brain, Book, Lightbulb, Link2, Share2, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Brain, Book } from "lucide-react";
 import { AddKnowledgeModal } from "@/components/brain/add-knowledge-modal";
 import { KnowledgeList } from "@/components/brain/knowledge-list";
 import { KnowledgeGraph } from "@/components/brain/knowledge-graph";
 
+export const dynamic = 'force-dynamic';
+
 export default async function BrainPage() {
   const profile = await getCurrentProfile();
-  
-  const knowledgeItems = await prisma.knowledgeItem.findMany({
-    where: { profileId: profile.id },
-    orderBy: { createdAt: 'desc' },
-  });
 
-  const books = await prisma.book.findMany({
-    where: { profileId: profile.id },
-    orderBy: { updatedAt: 'desc' },
-    take: 5
-  });
+  let knowledgeItems: any[] = [];
+  try {
+    knowledgeItems = await prisma.knowledgeItem.findMany({
+      where: { profileId: profile.id },
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch {
+    // DB unavailable
+  }
+
+  let books: any[] = [];
+  try {
+    books = await prisma.book.findMany({
+      where: { profileId: profile.id },
+      orderBy: { updatedAt: 'desc' },
+      take: 5
+    });
+  } catch {
+    // DB unavailable
+  }
 
   return (
     <div className="p-4 md:p-10 space-y-8 animate-in fade-in duration-700">

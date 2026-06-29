@@ -4,18 +4,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, FolderGit2, Zap, ExternalLink, Code } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 export default async function LegacyPage() {
   const profile = await getCurrentProfile();
-  
-  const projects = await prisma.project.findMany({
-    where: { profileId: profile.id },
-    orderBy: { updatedAt: 'desc' },
-  });
 
-  const books = await prisma.book.findMany({
-    where: { profileId: profile.id },
-    orderBy: { updatedAt: 'desc' },
-  });
+  let projects: any[] = [];
+  try {
+    projects = await prisma.project.findMany({
+      where: { profileId: profile.id },
+      orderBy: { updatedAt: 'desc' },
+    });
+  } catch {
+    // DB unavailable
+  }
+
+  let books: any[] = [];
+  try {
+    books = await prisma.book.findMany({
+      where: { profileId: profile.id },
+      orderBy: { updatedAt: 'desc' },
+    });
+  } catch {
+    // DB unavailable
+  }
 
   return (
     <div className="p-4 md:p-10 space-y-8 animate-in fade-in duration-700">

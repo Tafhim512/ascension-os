@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { notFound } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProjectWorkspacePage({
   params,
 }: {
@@ -13,9 +15,14 @@ export default async function ProjectWorkspacePage({
   const profile = await getCurrentProfile();
   const { id } = await params;
 
-  const project = await prisma.project.findUnique({
-    where: { id },
-  });
+  let project: any = null;
+  try {
+    project = await prisma.project.findUnique({
+      where: { id },
+    });
+  } catch {
+    // DB unavailable
+  }
 
   if (!project || project.profileId !== profile.id) {
     notFound();
