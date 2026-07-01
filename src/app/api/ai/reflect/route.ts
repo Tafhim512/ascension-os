@@ -8,6 +8,7 @@ export async function POST(req: Request) {
     const { entryId, content } = await req.json();
 
     const profile = await getCurrentProfile();
+    if (!profile) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
 
     let memoryContext = "No previous memories.";
     try {

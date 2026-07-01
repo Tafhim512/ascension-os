@@ -9,6 +9,10 @@ import type { Quest } from "@prisma/client";
 export default async function QuestsPage() {
   const profile = await getCurrentProfile();
 
+  if (!profile) {
+    return <div className="p-10 text-text-secondary">Please sign in to view quests.</div>;
+  }
+
   const activeQuests = profile.quests.filter((q: Quest) => q.isActive && !q.isCompleted);
   const completedQuests = profile.quests.filter((q: Quest) => q.isCompleted).sort((a: Quest, b: Quest) => new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime());
 

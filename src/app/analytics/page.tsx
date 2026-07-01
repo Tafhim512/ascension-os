@@ -8,6 +8,20 @@ export const dynamic = 'force-dynamic';
 export default async function AnalyticsPage() {
   const profile = await getCurrentProfile();
 
+  if (!profile) {
+    return (
+      <div className="p-4 md:p-10 space-y-8 animate-in fade-in duration-700">
+        <header>
+           <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 tracking-tight flex items-center gap-3">
+             <Activity className="w-8 h-8 text-blue-400" />
+             Analytics
+           </h1>
+           <p className="text-text-secondary mt-1">Please sign in to view your analytics.</p>
+        </header>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 md:p-10 space-y-8 animate-in fade-in duration-700">
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">

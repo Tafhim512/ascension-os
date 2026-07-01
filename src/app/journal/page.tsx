@@ -10,6 +10,14 @@ export const dynamic = 'force-dynamic';
 export default async function JournalPage() {
   const profile = await getCurrentProfile();
 
+  if (!profile) {
+    return (
+      <div className="p-4 md:p-10">
+        <p className="text-text-secondary">Please sign in to view your journal.</p>
+      </div>
+    );
+  }
+
   let entries: JournalEntry[] = [];
   try {
     entries = await prisma.journalEntry.findMany({

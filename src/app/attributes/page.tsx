@@ -19,6 +19,14 @@ const getAttributeIcon = (id: string, className: string) => {
 export default async function AttributesPage() {
   const profile = await getCurrentProfile();
 
+  if (!profile) {
+    return (
+      <div className="p-4 md:p-10">
+        <p className="text-text-secondary">Please sign in to view attributes.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 md:p-10 space-y-8 animate-in fade-in duration-700">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -33,7 +41,7 @@ export default async function AttributesPage() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {profile.attributes.map((attr: Attribute) => {
+        {(profile.attributes as Attribute[]).map((attr) => {
           const isHighLevel = attr.level >= 20;
 
           return (

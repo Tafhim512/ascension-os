@@ -10,6 +10,7 @@ export async function POST(req: Request) {
     }
 
     const profile = await getCurrentProfile();
+    if (!profile) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const results = await searchMemories(profile.id, query, limit);
     
     return NextResponse.json({ results });

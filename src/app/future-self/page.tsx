@@ -10,6 +10,14 @@ export const dynamic = 'force-dynamic';
 export default async function FutureSelfPage() {
   const profile = await getCurrentProfile();
 
+  if (!profile) {
+    return (
+      <div className="p-4 md:p-10">
+        <p className="text-text-secondary">Please sign in to view your Future Self Engine.</p>
+      </div>
+    );
+  }
+
   const futureSelves = profile.futureSelves || [];
   const activeFutureSelf = futureSelves.find((fs: FutureSelf) => fs.isActive) || futureSelves[0];
 

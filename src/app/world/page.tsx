@@ -14,6 +14,11 @@ const WORLDS = [
 
 export default async function WorldMapPage() {
   const profile = await getCurrentProfile();
+
+  if (!profile) {
+    return <div className="p-10 text-text-secondary">Please sign in to view the world map.</div>;
+  }
+
   const worlds = WORLDS;
   const currentWorldId = profile.currentWorld;
 

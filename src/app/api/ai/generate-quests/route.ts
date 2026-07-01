@@ -6,12 +6,13 @@ import { generateQuests } from "@/lib/ai/quest-generator";
 export async function POST() {
   try {
     const profile = await getCurrentProfile();
-    
+    if (!profile) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
     // Check if we already generated quests today to save AI compute
     // In a real app we'd track generation timestamps
-    
+
     const newQuests = await generateQuests(profile);
-    
+
     // Save to DB
     for (const q of newQuests) {
       await prisma.quest.create({

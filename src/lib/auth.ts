@@ -46,7 +46,7 @@ function makeFallbackProfile() {
     settings: "{}",
     createdAt: new Date(),
     updatedAt: new Date(),
-    attributes: [],
+    attributes: [] as { attributeId: string; level: number }[],
     quests: [],
     bosses: [],
     enemies: [],
@@ -125,88 +125,94 @@ async function getDevProfile() {
 }
 
 export async function getCurrentProfile() {
-  // Entire function wrapped so nothing escapes during build
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  const isSupabaseConfigured =
+    !!url &&
+    !!key &&
+    !url.includes("your-project") &&
+    !url.includes("example") &&
+    url.includes("supabase.co");
+
+  // ── DEV / LOCAL MODE ──────────────────────────────────────
+  if (!isSupabaseConfigured) {
+    const devProfile = await getDevProfile();
+    if (devProfile) return devProfile;
+    return makeFallbackProfile();
+  }
+
+  // ── PRODUCTION MODE ───────────────────────────────────────
   try {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    const isSupabaseConfigured =
-      !!url &&
-      !!key &&
-      !url.includes("your-project") &&
-      !url.includes("example") &&
-      url.includes("supabase.co");
-
-    if (!isSupabaseConfigured) {
-      const devProfile = await getDevProfile();
-      if (devProfile) return devProfile;
-    }
-
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (user) {
-      try {
-        const profile = await prisma.profile.findUnique({
-          where: { userId: user.id },
-          include: {
-            attributes: true,
-            futureSelves: true,
-            titles: true,
-            achievements: true,
-            quests: true,
-          },
-        });
-
-        if (profile) return profile;
-
-        return await prisma.profile.create({
-          data: {
-            userId: user.id,
-            playerName: user.email?.split("@")[0] || "Player",
-            attributes: {
-              create: [
-                { attributeId: "BODY", level: 1, currentXp: 0 },
-                { attributeId: "INTELLIGENCE", level: 1, currentXp: 0 },
-                { attributeId: "DISCIPLINE", level: 1, currentXp: 0 },
-                { attributeId: "WISDOM", level: 1, currentXp: 0 },
-                { attributeId: "COMMUNICATION", level: 1, currentXp: 0 },
-                { attributeId: "AI_ENGINEERING", level: 1, currentXp: 0 },
-                { attributeId: "SOFTWARE_ENGINEERING", level: 1, currentXp: 0 },
-                { attributeId: "PRODUCT_BUILDING", level: 1, currentXp: 0 },
-                { attributeId: "BUSINESS", level: 1, currentXp: 0 },
-                { attributeId: "LEADERSHIP", level: 1, currentXp: 0 },
-                { attributeId: "CREATIVITY", level: 1, currentXp: 0 },
-                { attributeId: "RELATIONSHIPS", level: 1, currentXp: 0 },
-                { attributeId: "FINANCE", level: 1, currentXp: 0 },
-                { attributeId: "EMOTIONAL_CONTROL", level: 1, currentXp: 0 },
-              ],
-            },
-            futureSelves: {
-              create: {
-                vision: "I am ready to transform.",
-                alignmentScore: 0,
-              },
-            },
-          },
-          include: {
-            attributes: true,
-            futureSelves: true,
-            titles: true,
-            achievements: true,
-            quests: true,
-          },
-        });
-      } catch {
-        // Profile not found or DB error during authenticated lookup
-      }
+    if (!user) {
+      // No active session — return null so callers know auth is required
+      return null;
     }
-  } catch {
-    // Catch-all: Supabase auth error, DB connection error, etc.
-  }
 
-  return makeFallbackProfile();
+    // Try to find existing profile
+    let profile = await prisma.profile.findUnique({
+      where: { userId: user.id },
+      include: {
+        attributes: true,
+        futureSelves: true,
+        titles: true,
+        achievements: true,
+        quests: true,
+      },
+    });
+
+    // Auto-create if missing
+    if (!profile) {
+      profile = await prisma.profile.create({
+        data: {
+          userId: user.id,
+          playerName: user.email?.split("@")[0] || "Player",
+          attributes: {
+            create: [
+              { attributeId: "BODY", level: 1, currentXp: 0 },
+              { attributeId: "INTELLIGENCE", level: 1, currentXp: 0 },
+              { attributeId: "DISCIPLINE", level: 1, currentXp: 0 },
+              { attributeId: "WISDOM", level: 1, currentXp: 0 },
+              { attributeId: "COMMUNICATION", level: 1, currentXp: 0 },
+              { attributeId: "AI_ENGINEERING", level: 1, currentXp: 0 },
+              { attributeId: "SOFTWARE_ENGINEERING", level: 1, currentXp: 0 },
+              { attributeId: "PRODUCT_BUILDING", level: 1, currentXp: 0 },
+              { attributeId: "BUSINESS", level: 1, currentXp: 0 },
+              { attributeId: "LEADERSHIP", level: 1, currentXp: 0 },
+              { attributeId: "CREATIVITY", level: 1, currentXp: 0 },
+              { attributeId: "RELATIONSHIPS", level: 1, currentXp: 0 },
+              { attributeId: "FINANCE", level: 1, currentXp: 0 },
+              { attributeId: "EMOTIONAL_CONTROL", level: 1, currentXp: 0 },
+            ],
+          },
+          futureSelves: {
+            create: {
+              vision: "I am ready to transform.",
+              alignmentScore: 0,
+            },
+          },
+        },
+        include: {
+          attributes: true,
+          futureSelves: true,
+          titles: true,
+          achievements: true,
+          quests: true,
+        },
+      });
+    }
+
+    return profile;
+  } catch (error) {
+    console.error("getCurrentProfile error:", error);
+    const devProfile = await getDevProfile();
+    if (devProfile) return devProfile;
+    return makeFallbackProfile();
+  }
 }

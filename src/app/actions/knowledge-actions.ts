@@ -14,6 +14,7 @@ export async function createKnowledgeItem(data: {
 }) {
   try {
     const profile = await getCurrentProfile();
+    if (!profile) return { success: false, error: "You must be logged in." };
 
     const extraction = await extractKnowledgeMetadata(data.content);
 

@@ -9,6 +9,8 @@ export async function POST(req: Request) {
     }
 
     const profile = await getCurrentProfile();
+    if (!profile) return new Response("Not authenticated", { status: 401 });
+
     const stream = await chatStream(profile, messages);
 
     const readable = new ReadableStream({

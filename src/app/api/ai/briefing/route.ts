@@ -5,8 +5,9 @@ import { generateMorningBriefing } from '@/lib/ai/briefing';
 export async function GET() {
   try {
     const profile = await getCurrentProfile();
+    if (!profile) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const briefing = await generateMorningBriefing(profile.id);
-    
+
     return NextResponse.json({ briefing });
   } catch {
     return NextResponse.json({ error: 'Failed to generate briefing' }, { status: 500 });

@@ -9,8 +9,13 @@ import { processAchievements } from "@/lib/engine/achievement-checker";
 import { getCurrentProfile } from "@/lib/auth";
 import type { Attribute } from "@prisma/client";
 
+const DEV_USER_ID = "123e4567-e89b-12d3-a456-426614174000";
+
 async function getProfileId(): Promise<string> {
   const profile = await getCurrentProfile();
+  if (!profile || profile.userId === DEV_USER_ID) {
+    throw new Error("You must be logged in to perform this action.");
+  }
   return profile.id;
 }
 
@@ -176,35 +181,39 @@ export async function createQuest(data: {
 // ==========================================
 
 export async function createAttribute(attributeId: string) {
-  const profileId = await getProfileId();
-  const profile = await prisma.profile.findUnique({
-    where: { id: profileId },
-    include: { attributes: true }
-  });
-  if (!profile) throw new Error("Profile not found");
-  
-  // Format attribute ID (Uppercase, no spaces -> underscores)
-  const formattedId = attributeId.toUpperCase().replace(/\s+/g, '_');
-  
-  // Check if it already exists
-  const exists = profile.attributes.find(a => a.attributeId === formattedId);
-  if (exists) {
-    throw new Error("Attribute already exists.");
-  }
-  
-  await prisma.attribute.create({
-    data: {
-      profileId: profile.id,
-      attributeId: formattedId,
-      level: 1,
-      currentXp: 0
+  try {
+    const profileId = await getProfileId();
+    const profile = await prisma.profile.findUnique({
+      where: { id: profileId },
+      include: { attributes: true }
+    });
+    if (!profile) throw new Error("Profile not found");
+    
+    const formattedId = attributeId.toUpperCase().replace(/\s+/g, '_');
+    
+    const exists = profile.attributes.find(a => a.attributeId === formattedId);
+    if (exists) {
+      throw new Error("Attribute already exists.");
     }
-  });
-  
-  revalidatePath('/attributes');
-  revalidatePath('/analytics');
-  revalidatePath('/quests');
-  return { success: true };
+    
+    await prisma.attribute.create({
+      data: {
+        profileId: profile.id,
+        attributeId: formattedId,
+        level: 1,
+        currentXp: 0
+      }
+    });
+    
+    revalidatePath('/attributes');
+    revalidatePath('/analytics');
+    revalidatePath('/quests');
+    return { success: true };
+  } catch (error) {
+    console.error("Error creating attribute:", error);
+    const message = error instanceof Error ? error.message : "Failed to create attribute.";
+    return { success: false, error: message };
+  }
 }
 
 // ─── BOSS ACTIONS ──────────────────────────────────────────

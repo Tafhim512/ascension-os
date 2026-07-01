@@ -9,6 +9,10 @@ export const dynamic = 'force-dynamic';
 export default async function LegacyPage() {
   const profile = await getCurrentProfile();
 
+  if (!profile) {
+    return <div className="p-10 text-text-secondary">Please sign in to view your legacy.</div>;
+  }
+
   let projects: { id: string; name: string; type: string; description: string | null; status: string; progress: number }[] = [];
   try {
     projects = await prisma.project.findMany({

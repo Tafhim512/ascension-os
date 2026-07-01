@@ -12,6 +12,7 @@ export async function createFutureSelf(data: {
 }) {
   try {
     const profile = await getCurrentProfile();
+    if (!profile) return { success: false, error: "You must be logged in." };
 
     await prisma.futureSelf.updateMany({
       where: { profileId: profile.id },
@@ -33,8 +34,8 @@ export async function createFutureSelf(data: {
     revalidatePath("/future-self");
     revalidatePath("/");
     return { success: true };
-  } catch {
-    console.error("Failed to create future self");
+  } catch (error) {
+    console.error("Failed to create future self", error);
     return { success: false };
   }
 }
@@ -42,6 +43,7 @@ export async function createFutureSelf(data: {
 export async function setActiveFutureSelf(id: string) {
   try {
     const profile = await getCurrentProfile();
+    if (!profile) return { success: false, error: "You must be logged in." };
 
     await prisma.futureSelf.updateMany({
       where: { profileId: profile.id },
@@ -58,7 +60,8 @@ export async function setActiveFutureSelf(id: string) {
     revalidatePath("/future-self");
     revalidatePath("/");
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("Failed to set active future self", error);
     return { success: false };
   }
 }

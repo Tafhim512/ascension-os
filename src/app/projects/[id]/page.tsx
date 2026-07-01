@@ -15,6 +15,11 @@ export default async function ProjectWorkspacePage({
   params: Promise<{ id: string }>;
 }) {
   const profile = await getCurrentProfile();
+
+  if (!profile) {
+    return <div className="p-10 text-text-secondary">Please sign in to view projects.</div>;
+  }
+
   const { id } = await params;
 
   let project: Project | null = null;

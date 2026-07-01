@@ -13,6 +13,10 @@ export const dynamic = 'force-dynamic';
 export default async function BossesPage() {
   const profile = await getCurrentProfile();
 
+  if (!profile) {
+    return <div className="p-10 text-text-secondary">Please sign in to view bosses.</div>;
+  }
+
   let profileWithBosses: { bosses: BossWithSubtasks[] } | null = null;
   try {
     profileWithBosses = await prisma.profile.findUnique({

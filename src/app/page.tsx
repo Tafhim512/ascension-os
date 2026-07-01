@@ -17,7 +17,7 @@ export const dynamic = 'force-dynamic';
 type ProfileWithRelations = Awaited<ReturnType<typeof getCurrentProfile>>;
 
 export default async function Dashboard() {
-  const profile = await getCurrentProfile() as ProfileWithRelations;
+  const profile = (await getCurrentProfile()) as any;
   const activeFutureSelf = profile.futureSelves?.find((f: FutureSelf) => f.isActive) || profile.futureSelves?.[0];
 
   const xpToNext = xpRequiredForLevel(profile.level);
