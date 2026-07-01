@@ -2,147 +2,7 @@ import { prisma } from './db';
 
 const DEV_USER_ID = "123e4567-e89b-12d3-a456-426614174000";
 
-async function getDevProfile() {
-  try {
-    const existing = await prisma.profile.findUnique({
-      where: { userId: DEV_USER_ID },
-      include: {
-        attributes: true,
-        futureSelves: true,
-        titles: true,
-        achievements: true,
-        quests: true,
-      },
-    });
-
-    if (existing) return existing;
-
-    return await prisma.profile.create({
-      data: {
-        userId: DEV_USER_ID,
-        playerName: "Player 1",
-        attributes: {
-          create: [
-            { attributeId: "BODY", level: 1, currentXp: 0 },
-            { attributeId: "INTELLIGENCE", level: 1, currentXp: 0 },
-            { attributeId: "DISCIPLINE", level: 1, currentXp: 0 },
-            { attributeId: "WISDOM", level: 1, currentXp: 0 },
-            { attributeId: "COMMUNICATION", level: 1, currentXp: 0 },
-            { attributeId: "AI_ENGINEERING", level: 1, currentXp: 0 },
-            { attributeId: "SOFTWARE_ENGINEERING", level: 1, currentXp: 0 },
-            { attributeId: "PRODUCT_BUILDING", level: 1, currentXp: 0 },
-            { attributeId: "BUSINESS", level: 1, currentXp: 0 },
-            { attributeId: "LEADERSHIP", level: 1, currentXp: 0 },
-            { attributeId: "CREATIVITY", level: 1, currentXp: 0 },
-            { attributeId: "RELATIONSHIPS", level: 1, currentXp: 0 },
-            { attributeId: "FINANCE", level: 1, currentXp: 0 },
-            { attributeId: "EMOTIONAL_CONTROL", level: 1, currentXp: 0 },
-          ],
-        },
-        futureSelves: {
-          create: {
-            vision: "I am ready to transform.",
-            alignmentScore: 0,
-          },
-        },
-      },
-      include: {
-        attributes: true,
-        futureSelves: true,
-        titles: true,
-        achievements: true,
-        quests: true,
-      },
-    });
-  } catch {
-    return null;
-  }
-}
-
-export async function getCurrentProfile() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  // Local/dev mode when Supabase is not properly configured
-  const isSupabaseConfigured =
-    !!url &&
-    !!key &&
-    !url.includes("your-project") &&
-    !url.includes("example") &&
-    url.includes("supabase.co");
-
-  if (!isSupabaseConfigured) {
-    const devProfile = await getDevProfile();
-    if (devProfile) return devProfile;
-  }
-
-  // Production: try Supabase session
-  try {
-    const { createClient } = await import("@/lib/supabase/server");
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      const profile = await prisma.profile.findUnique({
-        where: { userId: user.id },
-        include: {
-          attributes: true,
-          futureSelves: true,
-          titles: true,
-          achievements: true,
-          quests: true,
-        },
-      });
-
-      if (profile) return profile;
-
-      // Auto-create profile for new Supabase users
-      return await prisma.profile.create({
-        data: {
-          userId: user.id,
-          playerName: user.email?.split("@")[0] || "Player",
-          attributes: {
-            create: [
-              { attributeId: "BODY", level: 1, currentXp: 0 },
-              { attributeId: "INTELLIGENCE", level: 1, currentXp: 0 },
-              { attributeId: "DISCIPLINE", level: 1, currentXp: 0 },
-              { attributeId: "WISDOM", level: 1, currentXp: 0 },
-              { attributeId: "COMMUNICATION", level: 1, currentXp: 0 },
-              { attributeId: "AI_ENGINEERING", level: 1, currentXp: 0 },
-              { attributeId: "SOFTWARE_ENGINEERING", level: 1, currentXp: 0 },
-              { attributeId: "PRODUCT_BUILDING", level: 1, currentXp: 0 },
-              { attributeId: "BUSINESS", level: 1, currentXp: 0 },
-              { attributeId: "LEADERSHIP", level: 1, currentXp: 0 },
-              { attributeId: "CREATIVITY", level: 1, currentXp: 0 },
-              { attributeId: "RELATIONSHIPS", level: 1, currentXp: 0 },
-              { attributeId: "FINANCE", level: 1, currentXp: 0 },
-              { attributeId: "EMOTIONAL_CONTROL", level: 1, currentXp: 0 },
-            ],
-          },
-          futureSelves: {
-            create: {
-              vision: "I am ready to transform.",
-              alignmentScore: 0,
-            },
-          },
-        },
-        include: {
-          attributes: true,
-          futureSelves: true,
-          titles: true,
-          achievements: true,
-          quests: true,
-        },
-      });
-    }
-  } catch {
-    // DB or Supabase unavailable
-  }
-
-  // Last resort fallback: return a minimal profile object
-  // This prevents build-time crashes when DB is unreachable
+function makeFallbackProfile() {
   return {
     id: DEV_USER_ID,
     userId: DEV_USER_ID,
@@ -204,5 +64,149 @@ export async function getCurrentProfile() {
     notifications: [],
     rewards: [],
     habits: [],
-  } as any;
+  };
+}
+
+async function getDevProfile() {
+  try {
+    const existing = await prisma.profile.findUnique({
+      where: { userId: DEV_USER_ID },
+      include: {
+        attributes: true,
+        futureSelves: true,
+        titles: true,
+        achievements: true,
+        quests: true,
+      },
+    });
+
+    if (existing) return existing;
+
+    return await prisma.profile.create({
+      data: {
+        userId: DEV_USER_ID,
+        playerName: "Player 1",
+        attributes: {
+          create: [
+            { attributeId: "BODY", level: 1, currentXp: 0 },
+            { attributeId: "INTELLIGENCE", level: 1, currentXp: 0 },
+            { attributeId: "DISCIPLINE", level: 1, currentXp: 0 },
+            { attributeId: "WISDOM", level: 1, currentXp: 0 },
+            { attributeId: "COMMUNICATION", level: 1, currentXp: 0 },
+            { attributeId: "AI_ENGINEERING", level: 1, currentXp: 0 },
+            { attributeId: "SOFTWARE_ENGINEERING", level: 1, currentXp: 0 },
+            { attributeId: "PRODUCT_BUILDING", level: 1, currentXp: 0 },
+            { attributeId: "BUSINESS", level: 1, currentXp: 0 },
+            { attributeId: "LEADERSHIP", level: 1, currentXp: 0 },
+            { attributeId: "CREATIVITY", level: 1, currentXp: 0 },
+            { attributeId: "RELATIONSHIPS", level: 1, currentXp: 0 },
+            { attributeId: "FINANCE", level: 1, currentXp: 0 },
+            { attributeId: "EMOTIONAL_CONTROL", level: 1, currentXp: 0 },
+          ],
+        },
+        futureSelves: {
+          create: {
+            vision: "I am ready to transform.",
+            alignmentScore: 0,
+          },
+        },
+      },
+      include: {
+        attributes: true,
+        futureSelves: true,
+        titles: true,
+        achievements: true,
+        quests: true,
+      },
+    });
+  } catch {
+    return null;
+  }
+}
+
+export async function getCurrentProfile() {
+  // Entire function wrapped so nothing escapes during build
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    const isSupabaseConfigured =
+      !!url &&
+      !!key &&
+      !url.includes("your-project") &&
+      !url.includes("example") &&
+      url.includes("supabase.co");
+
+    if (!isSupabaseConfigured) {
+      const devProfile = await getDevProfile();
+      if (devProfile) return devProfile;
+    }
+
+    const { createClient } = await import("@/lib/supabase/server");
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      try {
+        const profile = await prisma.profile.findUnique({
+          where: { userId: user.id },
+          include: {
+            attributes: true,
+            futureSelves: true,
+            titles: true,
+            achievements: true,
+            quests: true,
+          },
+        });
+
+        if (profile) return profile;
+
+        return await prisma.profile.create({
+          data: {
+            userId: user.id,
+            playerName: user.email?.split("@")[0] || "Player",
+            attributes: {
+              create: [
+                { attributeId: "BODY", level: 1, currentXp: 0 },
+                { attributeId: "INTELLIGENCE", level: 1, currentXp: 0 },
+                { attributeId: "DISCIPLINE", level: 1, currentXp: 0 },
+                { attributeId: "WISDOM", level: 1, currentXp: 0 },
+                { attributeId: "COMMUNICATION", level: 1, currentXp: 0 },
+                { attributeId: "AI_ENGINEERING", level: 1, currentXp: 0 },
+                { attributeId: "SOFTWARE_ENGINEERING", level: 1, currentXp: 0 },
+                { attributeId: "PRODUCT_BUILDING", level: 1, currentXp: 0 },
+                { attributeId: "BUSINESS", level: 1, currentXp: 0 },
+                { attributeId: "LEADERSHIP", level: 1, currentXp: 0 },
+                { attributeId: "CREATIVITY", level: 1, currentXp: 0 },
+                { attributeId: "RELATIONSHIPS", level: 1, currentXp: 0 },
+                { attributeId: "FINANCE", level: 1, currentXp: 0 },
+                { attributeId: "EMOTIONAL_CONTROL", level: 1, currentXp: 0 },
+              ],
+            },
+            futureSelves: {
+              create: {
+                vision: "I am ready to transform.",
+                alignmentScore: 0,
+              },
+            },
+          },
+          include: {
+            attributes: true,
+            futureSelves: true,
+            titles: true,
+            achievements: true,
+            quests: true,
+          },
+        });
+      } catch {
+        // Profile not found or DB error during authenticated lookup
+      }
+    }
+  } catch {
+    // Catch-all: Supabase auth error, DB connection error, etc.
+  }
+
+  return makeFallbackProfile();
 }
