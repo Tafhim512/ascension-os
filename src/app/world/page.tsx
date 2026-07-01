@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { getCurrentProfile } from "@/lib/auth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Map, Star, GitBranch, Activity, Smartphone, CheckCircle2 } from "lucide-react";
