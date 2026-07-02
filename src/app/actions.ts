@@ -14,7 +14,7 @@ const DEV_USER_ID = "123e4567-e89b-12d3-a456-426614174000";
 async function getProfileId(): Promise<string> {
   const profile = await getCurrentProfile();
   if (!profile || profile.userId === DEV_USER_ID) {
-    throw new Error("You must be logged in to perform this action.");
+    throw new Error("AUTH_REQUIRED");
   }
   return profile.id;
 }

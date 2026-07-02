@@ -15,10 +15,10 @@
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY`
-3. Run the Prisma migration against Supabase:
-   ```bash
-   DATABASE_URL="postgresql://postgres:PASSWORD@db.xxxxx.supabase.co:5432/postgres" npx prisma db push
-   ```
+ 3. Run the Prisma migration against Supabase:
+    ```bash
+    DATABASE_URL="postgresql://postgres:PASSWORD@db.xxxxx.supabase.co:6543/postgres" npx prisma db push
+    ```
 4. Seed initial achievements:
    ```bash
    npx tsx prisma/seed.ts
@@ -35,7 +35,7 @@
    NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
    SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-   DATABASE_URL=postgresql://postgres:PASSWORD@db.xxxxx.supabase.co:5432/postgres
+    DATABASE_URL=postgresql://postgres:PASSWORD@db.xxxxx.supabase.co:6543/postgres
    OLLAMA_BASE_URL=https://your-ollama-server.com
    OLLAMA_MODEL=llama3.1
    OLLAMA_EMBED_MODEL=nomic-embed-text

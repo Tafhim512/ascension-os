@@ -1,7 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 
-type PrismaClientSingleton = ReturnType<typeof PrismaClient.prototype.$extends>;
-
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };

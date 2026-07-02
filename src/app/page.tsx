@@ -14,9 +14,8 @@ import type { Quest, Attribute, FutureSelf } from "@prisma/client";
 
 export const dynamic = 'force-dynamic';
 
-type ProfileWithRelations = Awaited<ReturnType<typeof getCurrentProfile>>;
-
 export default async function Dashboard() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const profile = (await getCurrentProfile()) as any;
   const activeFutureSelf = profile.futureSelves?.find((f: FutureSelf) => f.isActive) || profile.futureSelves?.[0];
 

@@ -9,16 +9,23 @@ export function AddAttributeModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [attributeName, setAttributeName] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = () => {
     if (!attributeName.trim()) return;
+    setError(null);
     startTransition(async () => {
       try {
-        await createAttribute(attributeName.trim());
+        const result = await createAttribute(attributeName.trim());
+        if (result?.error) {
+          setError(result.error);
+          return;
+        }
         setAttributeName("");
         setIsOpen(false);
       } catch (e) {
         console.error(e);
+        setError("Unexpected error. Please try again.");
       }
     });
   };
@@ -73,6 +80,9 @@ export function AddAttributeModal() {
                   placeholder="e.g. MUSIC, SAAS SALES, MEDITATION"
                   className="w-full bg-bg-primary border border-border/50 rounded-lg px-4 py-3 text-sm text-white placeholder-text-muted/50 focus:border-accent-cyan/50 focus:outline-none focus:ring-1 focus:ring-accent-cyan/20 transition-colors uppercase"
                 />
+                {error && (
+                  <p className="text-xs text-red-400 mt-2">{error}</p>
+                )}
                 <p className="text-xs text-text-muted mt-3 leading-relaxed">
                   Spaces will be replaced with underscores. Attributes start at Level 1 and can be leveled up by assigning them as rewards for custom quests.
                 </p>
