@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 
-const DEV_USER_ID = "123e4567-e89b-12d3-a456-426614174000";
-
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
@@ -16,22 +14,7 @@ export async function GET(req: Request) {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        const profile = await prisma.profile.findUnique({
-          where: { userId: DEV_USER_ID },
-          include: {
-            attributes: true,
-            futureSelves: true,
-            titles: true,
-            achievements: true,
-            quests: true,
-          },
-        });
-
-        if (!profile) {
-          return NextResponse.json({ error: "Profile not found" }, { status: 404 });
-        }
-
-        return NextResponse.json({ profile });
+        return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
       }
 
       let profile = await prisma.profile.findUnique({
@@ -131,7 +114,7 @@ export async function POST(req: Request) {
 
     const profile = await prisma.profile.create({
       data: {
-        userId: userId || DEV_USER_ID,
+        userId,
         playerName: playerName || "Player 1",
         attributes: {
           create: [
@@ -157,6 +140,10 @@ export async function POST(req: Request) {
             alignmentScore: 0,
           },
         },
+      },
+      include: {
+        attributes: true,
+        futureSelves: true,
       },
     });
 

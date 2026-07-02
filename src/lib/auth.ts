@@ -211,15 +211,9 @@ export async function getCurrentProfile() {
     return profile;
   } catch (error) {
     console.error("getCurrentProfile error:", error);
-    // Only fall back to dev profile in local/dev mode, NOT in production
-    // In production, a DB/auth error means the user needs to re-auth or the
-    // database is misconfigured — throwing makes the problem visible.
-    const isProduction = process.env.NODE_ENV === "production";
-    if (!isProduction) {
-      const devProfile = await getDevProfile();
-      if (devProfile) return devProfile;
-      return makeFallbackProfile();
-    }
-    throw new Error("Unable to load profile. Please try refreshing or logging in again.");
+    // In ALL environments, return null on error instead of throwing.
+    // Server components should handle null gracefully rather than crashing.
+    // The real error is logged to console for debugging.
+    return null;
   }
 }
